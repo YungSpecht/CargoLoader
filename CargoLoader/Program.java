@@ -7,8 +7,8 @@ import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.Utils.MatrixUtils;
 
 public class Program {
-    private final static int[] parcelAmounts = {10, 10, 10};
-    private final static int[] parcelValues = {1, 1, 1};
+    private final static int[] parcelAmounts = {18, 18, 16};
+    private final static int[] parcelValues = {3, 4, 5};
 
     public static void main(String[] args) {
         int[][] matrix = MatrixCreator.create_matrix(parcelAmounts[0], parcelAmounts[1], parcelAmounts[2]);
@@ -25,5 +25,6 @@ public class Program {
             System.out.println();
         }
         System.out.println("amount of packed parcels: " + solutions.length);
+        System.out.println("score: " + packer.get_score());
     }
 }

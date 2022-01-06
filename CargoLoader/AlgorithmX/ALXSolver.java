@@ -92,4 +92,8 @@ public class ALXSolver {
         }
         return new int[0];
     }
+
+    public int get_score(){
+        return maxScore;
+    }
 }
