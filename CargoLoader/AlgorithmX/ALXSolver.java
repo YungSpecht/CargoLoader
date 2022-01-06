@@ -59,7 +59,7 @@ public class ALXSolver {
         
         for(int r = 1; r < matrix.length; r++){
             //A row is selected such that matrix[r][selectedColumn] == 1
-            if(matrix[r][minColumn] == 1){
+            if(matrix[r][minColumn] != 0){
                 //The current row get's added to the partial solution
                 partialSolution = ArrayUtils.add_element(partialSolution, matrix[r][0]);
                 solutionTracker = ArrayUtils.add_element(solutionTracker, matrix[r][0]);

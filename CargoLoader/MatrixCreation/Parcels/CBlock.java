@@ -3,21 +3,21 @@ package CargoLoader.MatrixCreation.Parcels;
 public class CBlock extends Parcel{
 
     private static int[][][] shape = {
-        {{ 1 , 1 , 1 },
-         { 1 , 1 , 1 },
-         { 1 , 1 , 1 }},
+        {{ 3 , 3 , 3 },
+         { 3 , 3 , 3 },
+         { 3 , 3 , 3 }},
 
-        {{ 1 , 1 , 1 },
-         { 1 , 1 , 1 },
-         { 1 , 1 , 1 }},
+        {{ 3 , 3 , 3 },
+         { 3 , 3 , 3 },
+         { 3 , 3 , 3 }},
 
-        {{ 1 , 1 , 1 },
-         { 1 , 1 , 1 },
-         { 1 , 1 , 1 }},
+        {{ 3 , 3 , 3 },
+         { 3 , 3 , 3 },
+         { 3 , 3 , 3 }},
     };
 
     public CBlock() {
-        super(shape);
+        super(shape, 3);
     }
     
 }

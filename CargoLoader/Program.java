@@ -7,7 +7,7 @@ import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.Utils.MatrixUtils;
 
 public class Program {
-    private final static int[] parcelAmounts = {2, 2, 2};
+    private final static int[] parcelAmounts = {10, 10, 10};
     private final static int[] parcelValues = {1, 1, 1};
 
     public static void main(String[] args) {
@@ -17,5 +17,13 @@ public class Program {
         int[] solutions = packer.algoX_loader(matrix);
 
         int[][][] finalContainer = MatrixUtils.build_container(matrix, solutions, parcelAmounts);
+
+        for(int r = 0; r < finalContainer[0].length; r++){
+            for(int l = 0; l < finalContainer.length; l++){
+                System.out.println(Arrays.toString(finalContainer[l][r]));
+            }
+            System.out.println();
+        }
+        System.out.println("amount of packed parcels: " + solutions.length);
     }
 }

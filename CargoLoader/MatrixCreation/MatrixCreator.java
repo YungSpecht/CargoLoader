@@ -1,6 +1,9 @@
 package CargoLoader.MatrixCreation;
 
 import CargoLoader.Utils.*;
+
+import java.util.Arrays;
+
 import CargoLoader.MatrixCreation.Parcels.*;
 
 public class MatrixCreator {
@@ -35,11 +38,11 @@ public class MatrixCreator {
 
     private static int[][] simulate_placements(Parcel parcel){
         int[][] result = new int[0][0];
-        if(parcel.get_parcel_length() == parcel.get_parcel_cols() && parcel.get_parcel_cols() == parcel.get_parcel_rows()){
+        if(parcel instanceof CBlock){
             result = ArrayUtils.add(result, matrix_action(parcel));
             return result;
         }
-        else if(parcel.get_parcel_length() == parcel.get_parcel_rows()){
+        else if(parcel instanceof ABlock){
             result = ArrayUtils.add(result, matrix_action(parcel)); 
             parcel.rotate_parcel_right(1);
             result = ArrayUtils.add(result, matrix_action(parcel));

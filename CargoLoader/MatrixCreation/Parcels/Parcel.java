@@ -7,21 +7,14 @@ public class Parcel {
     private int rowPos;
     private int colPos;
     private int[][][] shape;
+    private int id;
 
-    public Parcel(int[][][] shape){
+    public Parcel(int[][][] shape, int id){
         lenPos = 0;
         rowPos = 0;
         colPos = 0;
         this.shape = shape;
-    }
-    public void print_parcel(){
-        for(int i = 0; i < shape.length; i++){
-            for(int j = 0; j < shape[0].length; j++){
-                System.out.println(Arrays.toString(shape[i][j]));
-            }
-            System.out.println();
-        }
-        System.out.println("--------------------------");
+        this.id = id;
     }
 
     public int get_length_position(){
@@ -77,7 +70,7 @@ public class Parcel {
         for(int i = 0; i < shape.length; i++){
             for(int j = 0; j < shape[i].length; j++){
                 for(int k = 0; k < shape[i][j].length; k++){
-                    result[i + lenPos][j + rowPos][k + colPos] = 1;
+                    result[i + lenPos][j + rowPos][k + colPos] = id;
                 }
             }
         }
@@ -90,7 +83,7 @@ public class Parcel {
             for(int i = 0; i < result.length; i++){
                 for(int j = 0; j < result[i].length; j++){
                     for(int k = 0; k < result[i][j].length; k++){
-                        result[i][j][k] = 1;
+                        result[i][j][k] = id;
                     }
                 }
             }
@@ -103,7 +96,7 @@ public class Parcel {
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < result[i].length; j++){
                 for(int k = 0; k < result[i][j].length; k++){
-                    result[i][j][k] = 1;
+                    result[i][j][k] = id;
                 }
             }
         }

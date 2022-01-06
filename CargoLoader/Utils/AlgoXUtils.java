@@ -10,7 +10,7 @@ public class AlgoXUtils {
         for(int c = 1; c < matrix[0].length; c++){
             int count = 0;
             for(int r = 1; r < matrix.length; r++){
-                if(matrix[r][c] == 1){
+                if(matrix[r][c] != 0){
                     count++;
                 }
             }
@@ -26,7 +26,7 @@ public class AlgoXUtils {
         for(int c = 1; c < matrix[0].length; c++){
             counter = 0;
             for(int r = 1; r < matrix.length; r++){
-               if(matrix[r][c] == 1){
+               if(matrix[r][c] != 0){
                 counter++;
                }
             }
@@ -40,7 +40,7 @@ public class AlgoXUtils {
     public static int[] get_relevant_columns(int[] row) {
         int[] relevantCols = new int[0];
         for(int i = 1; i < row.length; i++){
-            if(row[i] == 1){
+            if(row[i] != 0){
                 relevantCols = ArrayUtils.add_distinct_element(relevantCols, i);
             }
         }
@@ -51,7 +51,7 @@ public class AlgoXUtils {
         int[]relevantRows = new int[0];
         for(int i = 0; i < cols2check.length; i++){
             for(int r = 1; r < matrix.length; r++){
-                if(matrix[r][cols2check[i]] == 1){
+                if(matrix[r][cols2check[i]] != 0){
                     relevantRows = ArrayUtils.add_distinct_element(relevantRows, r);
                 }
             }

@@ -3,16 +3,16 @@ package CargoLoader.MatrixCreation.Parcels;
 public class BBlock extends Parcel{
     
     private static int[][][] shape = {
-        {{ 1 , 1 , 1 , 1 },
-         { 1 , 1 , 1 , 1 },
-         { 1 , 1 , 1 , 1 }},
+        {{ 2 , 2 , 2 , 2 },
+         { 2 , 2 , 2 , 2 },
+         { 2 , 2 , 2 , 2 }},
 
-        {{ 1 , 1 , 1 , 1 },
-         { 1 , 1 , 1 , 1 },
-         { 1 , 1 , 1 , 1 }},
+        {{ 2 , 2 , 2 , 2 },
+         { 2 , 2 , 2 , 2 },
+         { 2 , 2 , 2 , 2 }},
     };
 
     public BBlock(){
-        super(shape);
+        super(shape, 2);
     }
 }
