@@ -22,15 +22,14 @@ public class ALXSolver {
 
     public int[] algoX_loader(int[][] in){
         int[][] data = AlgoXUtils.prepare_matrix(in);
-        int[] answers = algo_x(data);
+        int result = algo_x(data);
 
         return bestSolution;
     }
 
 
-    private int[] algo_x(int[][] in){
+    private int algo_x(int[][] in){
         int[][] matrix = ArrayUtils.copy(in);
-        int[] partialSolution = new int[0];
         matrix = AlgoXUtils.prune(matrix);
 
         //BASE CASE: If the matrix is empty the current partial solutin is valid
@@ -40,28 +39,16 @@ public class ALXSolver {
                 bestSolution = solutionTracker;
                 maxScore = check;
             }
-            return new int[0];
+            return 0;
         }
 
         //Select the first colum containing the least amount of 1's
         int minColumn = AlgoXUtils.get_min_column(matrix);
-
-        //If any column contains no 1's at all the branch gets terminated
-        if(minColumn == -1){
-            int check = AlgoXUtils.calculate_score(solutionTracker, parcelAmounts, parcelValues);
-                if(check > maxScore){
-                    bestSolution = solutionTracker;
-                    maxScore = check;
-                }
-            int[] terminateBranch = {-666};
-            return terminateBranch;
-        }
         
         for(int r = 1; r < matrix.length; r++){
             //A row is selected such that matrix[r][selectedColumn] == 1
             if(matrix[r][minColumn] != 0){
                 //The current row get's added to the partial solution
-                partialSolution = ArrayUtils.add_element(partialSolution, matrix[r][0]);
                 solutionTracker = ArrayUtils.add_element(solutionTracker, matrix[r][0]);
                 
                 //The rows and columns that have to be deleted get stored in seperate arrays 
@@ -73,24 +60,19 @@ public class ALXSolver {
                 matrix = ArrayUtils.remove_col(matrix, columns2delete);
 
                 //Recursive call on the reduced matrix
-                int[] newPartialSolution = algo_x(matrix);
+                int check = algo_x(matrix);
                 
                 //Add the new partial solution to the current one if successful
-                if(newPartialSolution.length == 0){
-                    return partialSolution;
-                }
-                if(newPartialSolution[0] != -666){
-                    partialSolution = ArrayUtils.add(partialSolution, newPartialSolution);
-                    return partialSolution;
+                if(check == 0){
+                    return 0;
                 }
 
 
                 //Remove current row from partial solution and move on to next row if unsuccessful
-                partialSolution = ArrayUtils.remove_last_element(partialSolution);
                 solutionTracker = ArrayUtils.remove_last_element(solutionTracker);
             }
         }
-        return new int[0];
+        return 0;
     }
 
     public int get_score(){

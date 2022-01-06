@@ -7,7 +7,7 @@ import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.Utils.MatrixUtils;
 
 public class Program {
-    private final static int[] parcelAmounts = {18, 18, 16};
+    private final static int[] parcelAmounts = {0, 0, 0};
     private final static int[] parcelValues = {3, 4, 5};
 
     public static void main(String[] args) {

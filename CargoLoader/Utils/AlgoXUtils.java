@@ -4,9 +4,7 @@ import java.util.Arrays;
 
 public class AlgoXUtils {
     public static int get_min_column(int[][] matrix){
-        
-        int[] columnsMinCalc = new int[matrix[0].length - 1];
-
+        int[] tracker = {99999, 0};
         for(int c = 1; c < matrix[0].length; c++){
             int count = 0;
             for(int r = 1; r < matrix.length; r++){
@@ -14,27 +12,12 @@ public class AlgoXUtils {
                     count++;
                 }
             }
-            columnsMinCalc[c - 1]= count;
-        }
-
-        Arrays.sort(columnsMinCalc);
-        if(columnsMinCalc[0] == 0){
-            return -1;
-        }
-
-        int counter;
-        for(int c = 1; c < matrix[0].length; c++){
-            counter = 0;
-            for(int r = 1; r < matrix.length; r++){
-               if(matrix[r][c] != 0){
-                counter++;
-               }
-            }
-            if(counter == columnsMinCalc[0]){
-                return c;
+            if(count < tracker[0]){
+                tracker[0] = count;
+                tracker[1] = c;
             }
         }
-        return -1;
+        return tracker[1];
     }
 
     public static int[] get_relevant_columns(int[] row) {
