@@ -2,6 +2,8 @@ package CargoLoader;
 
 import java.util.ArrayList;
 
+import javax.xml.crypto.Data;
+
 public class LinkedList {
 	ColumnObject header;
 	int[][] matrix;
@@ -12,11 +14,17 @@ public class LinkedList {
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
+	int aCount;
+	int bCount;
+	int cCount;
 
 	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
 		maxValue = 0;
+		aCount = 0;
+		bCount = 0;
+		cCount = 0;
 		this.matrix = matrix;
 		createList();
 	}
@@ -77,9 +85,29 @@ public class LinkedList {
 		int prevValue = -1;
 		for (DataObject i = c.D; i != c; i = i.D) {
 			partialSolution.add(i.row);
-			for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
+			track_row(i.row);
+			for (DataObject j = i.R; j != i; j = j.R){
+				j.C.cover();
+			}
+			DataObject help = header;
+			if(get_parcel_type(i.row) == 1){
+				if(aCount >= Program.A){
+					remove_type(1, help);
+				}
+			}
+			else if(get_parcel_type(i.row) == 2){
+				if(bCount >= Program.B){
+					remove_type(2, help);
+				}
+			}
+			else{
+				if(cCount >= Program.C){
+					remove_type(3, help);
+				}
+			}
 			int newValue = search();
 			partialSolution.remove(partialSolution.size() - 1);
+			untrack_row(i.row);
 			for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
 			if (newValue <= prevValue) break;
 			else prevValue = newValue;
@@ -144,7 +172,52 @@ public class LinkedList {
 		}
 		return result;
 	}
+
+	void track_row(int row){
+		if(get_parcel_type(row) == 1){
+			aCount++;
+		}
+		else if(get_parcel_type(row) == 2){
+			bCount++;
+		}
+		else{
+			cCount++;
+		}
+	}
+
+	void untrack_row(int row){
+		if(get_parcel_type(row) == 1){
+			aCount--;
+		}
+		else if(get_parcel_type(row) == 2){
+			bCount--;
+		}
+		else{
+			cCount--;
+		}
+	}
+
+	void remove_type(int type, DataObject cursor){
+		for(DataObject i = cursor.R.D; i != cursor.R; i = i.D){
+			if(get_parcel_type(i.row) == type){
+				for(DataObject j = i.R; j != i; j = j.R){
+					j.remove();
+				}
+			}
+		}
+	}
+
+	int get_parcel_type(int row){
+		for(int i = 0; i < matrix[0].length; i++){
+			if(matrix[row][i] != 0){
+				return matrix[row][i];
+			}
+		}
+		return 0;
+	}
 }
+
+
 
 class DataObject {
 	DataObject L, R, U, D;
@@ -173,6 +246,20 @@ class DataObject {
 		other.L = this;
 		R.L = other;
 		R = other;
+	}
+
+	void remove(){
+		L.R = R;
+		R.L = L;
+		D.U = U;
+		U.D = D;
+	}
+
+	void restore(){
+		L.R = this;
+		R.L = this;
+		U.D = this;
+		D.U = this;
 	}
 }
 

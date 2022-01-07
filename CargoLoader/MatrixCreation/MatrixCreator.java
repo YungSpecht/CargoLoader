@@ -21,9 +21,9 @@ public class MatrixCreator {
         int[][] simC = simulate_placements(cBlock);
         //System.out.println("simC " + simC.length);
 
+        result = ArrayUtils.add(result, simC);
         result = ArrayUtils.add(result, simA);
         result = ArrayUtils.add(result, simB);
-        result = ArrayUtils.add(result, simC);
 
         System.out.println("Done");
         System.out.println("Exact cover matrix size: " + result.length + "x" + result[0].length);

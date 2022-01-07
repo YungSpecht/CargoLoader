@@ -1,34 +1,24 @@
 package CargoLoader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.Utils.MatrixUtils;
 
 public class Program {
-    public static ArrayList<Integer> bestSolution;
-    public static int maxValue = 0;
+    public static final int A = 1;
+    public static final int B = 1;
+    public static final int C = 1;
 
     public static void main(String[] args) {
         //create 2d cover matrix
         int[][] matrix = MatrixCreator.create_matrix();
-        for(int i = 0; i < 50; i++){
-            MatrixUtils.random_sort_parcels(matrix);
         
-            //create linked list from matrix and run DLX on it
-            LinkedList list = new LinkedList(matrix);
-            ArrayList<Integer> result = list.exactCover(10);
-            if(list.get_max_value() > maxValue){
-                bestSolution = result;
-                maxValue = list.get_max_value();
-            }
-
-        }
+        //create linked list from matrix and run DLX on it
+        LinkedList list = new LinkedList(matrix);
+        ArrayList<Integer> result = list.exactCover(5);
 
         //build the resulting cargo container
-        int[][][] finalContainer = MatrixUtils.build_container(matrix, bestSolution);
+        int[][][] finalContainer = MatrixUtils.build_container(matrix, result);
         
         //print the cargo container
         for(int r = 0; r < finalContainer[0].length; r++){
@@ -42,8 +32,8 @@ public class Program {
             System.out.println();
         }
         
-        System.out.println("amount of packed parcels: " + bestSolution.size());
-        System.out.println("value of parcels: " + maxValue);
+        System.out.println("amount of packed parcels: " + result.size());
+        System.out.println("value of parcels: " + list.get_max_value());
         
     }
 }
