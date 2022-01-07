@@ -1,5 +1,7 @@
 package CargoLoader.Utils;
 
+import java.util.ArrayList;
+
 public class MatrixUtils {
     public static int[] create_matrix_row(int[][][] container){
         int[] result = new int[0];
@@ -19,11 +21,11 @@ public class MatrixUtils {
         return result;
     }
 
-    public static int[][][] build_container(int[][] matrix, int[] solution, int[] parcelAmounts){
+    public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution, int[] parcelAmounts){
         int cutoff = parcelAmounts[0] + parcelAmounts[1] + parcelAmounts[2];
         int[][][] result = new int[35][8][5];
-        for(int i = 0; i < solution.length; i++){
-            int[] temp = ArrayUtils.cutoff_left(matrix[solution[i]], cutoff);
+        for(int i = 0; i < solution.size(); i++){
+            int[] temp = ArrayUtils.cutoff_left(matrix[solution.get(i)], cutoff);
             int[][][] temp2 = reassemble_container(temp);
             result = merge_containers(result, temp2);
         }

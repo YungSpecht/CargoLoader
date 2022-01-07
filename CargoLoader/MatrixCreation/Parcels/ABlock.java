@@ -13,5 +13,4 @@ public class ABlock extends Parcel{
     public ABlock() {
         super(shape, 1);
     }
-    
 }

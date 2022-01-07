@@ -1,7 +1,5 @@
 package CargoLoader.MatrixCreation.Parcels;
 
-import java.util.Arrays;
-
 public class Parcel {
     private int lenPos;
     private int rowPos;
@@ -65,6 +63,9 @@ public class Parcel {
         colPos = Pos;
     }
 
+    /* returns a 3d array representation of the cargo container with the parcel placed inside of it
+     * according to it's coordinates 
+     */
     public int[][][] place_parcel(){
         int[][][] result = new int[35][8][5];
         for(int i = 0; i < shape.length; i++){
@@ -77,7 +78,21 @@ public class Parcel {
         return  result;
     }
 
-    public void rotate_parcel_right(int times){
+    //rotate parcel once around the y-axis
+    public void rotate_parcel(){
+        int[][][] result = new int[shape[0][0].length][shape[0].length][shape.length];
+        for(int i = 0; i < result.length; i++){
+            for(int j = 0; j < result[i].length; j++){
+                for(int k = 0; k < result[i][j].length; k++){
+                    result[i][j][k] = id;
+                }
+            }
+        }
+        shape = result;
+    }
+   
+    //rotate parcel around the x-axis
+    public void tip_parcel_right(int times){
         for(int y = 0; y < times; y++){
             int[][][] result = new int[shape.length][shape[0][0].length][shape[0].length];
             for(int i = 0; i < result.length; i++){
@@ -91,15 +106,18 @@ public class Parcel {
         }
     }
 
-    public void rotate_parcel_forward(){
-        int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
-        for(int i = 0; i < result.length; i++){
-            for(int j = 0; j < result[i].length; j++){
-                for(int k = 0; k < result[i][j].length; k++){
-                    result[i][j][k] = id;
+    //rotate parcel around the y-axis
+    public void tip_parcel_forward(int times){
+        for(int y = 0; y < times; y++){
+            int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
+            for(int i = 0; i < result.length; i++){
+                for(int j = 0; j < result[i].length; j++){
+                    for(int k = 0; k < result[i][j].length; k++){
+                        result[i][j][k] = id;
+                    }
                 }
             }
+            shape = result;
         }
-        shape = result;
     }
 }

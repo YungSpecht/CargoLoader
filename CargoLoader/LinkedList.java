@@ -1,7 +1,6 @@
 package CargoLoader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LinkedList {
     ColumnObject header;
@@ -9,7 +8,7 @@ public class LinkedList {
 
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
-
+	int maxValue;
     int[] parcelAmounts;
     int[] parcelValues;
 	int solutionsFound;
@@ -64,8 +63,10 @@ public class LinkedList {
         }
 
 		if (header.R == header) {
-			if (valueOf(partialSolution) > valueOf(bestSolution)){
+			int check = valueOf(partialSolution);
+			if (check > valueOf(bestSolution)){
                 bestSolution = new ArrayList<>(partialSolution);
+				maxValue = check;
             }
 			solutionsFound++;
 			return valueOf(partialSolution);
@@ -119,6 +120,10 @@ public class LinkedList {
 
 	int matrix() {
 		return valueOf(partialSolution);
+	}
+
+	int get_score(){
+		return maxValue;
 	}
 
 	int valueOf(ArrayList<Integer> partialSolution) {

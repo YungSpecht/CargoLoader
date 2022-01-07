@@ -19,5 +19,4 @@ public class CBlock extends Parcel{
     public CBlock() {
         super(shape, 3);
     }
-    
 }
