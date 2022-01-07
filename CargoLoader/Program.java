@@ -1,23 +1,38 @@
 package CargoLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.Utils.MatrixUtils;
 
 public class Program {
-    private final static int[] parcelAmounts = {3, 3, 3};
-    private final static int[] parcelValues = {1, 1, 1};
+    public static ArrayList<Integer> bestSolution;
+    public static int maxValue = 0;
 
     public static void main(String[] args) {
-        int[][] matrix = MatrixCreator.create_matrix(parcelAmounts[0], parcelAmounts[1], parcelAmounts[2]);
-        //System.out.println(matrix.length);
+        //create 2d cover matrix
+        int[][] matrix = MatrixCreator.create_matrix();
+        for(int i = 0; i < 50; i++){
+            MatrixUtils.random_sort_parcels(matrix);
         
-        LinkedList list = new LinkedList(matrix, parcelAmounts, parcelValues);
-        ArrayList<Integer> result = list.exactCover(1000);
+            //create linked list from matrix and run DLX on it
+            LinkedList list = new LinkedList(matrix);
+            ArrayList<Integer> result = list.exactCover(10);
+            if(list.get_max_value() > maxValue){
+                bestSolution = result;
+                maxValue = list.get_max_value();
+            }
 
-        int[][][] finalContainer = MatrixUtils.build_container(matrix, result, parcelAmounts);
+        }
 
+        //build the resulting cargo container
+        int[][][] finalContainer = MatrixUtils.build_container(matrix, bestSolution);
+        
+        //print the cargo container
         for(int r = 0; r < finalContainer[0].length; r++){
+            System.out.println("Layer: " + (r + 1));
             for(int c = 0; c < finalContainer[0][0].length; c++){
                 for(int l = 0; l < finalContainer.length; l++){
                     System.out.print(finalContainer[l][r][c]);
@@ -26,8 +41,9 @@ public class Program {
             }
             System.out.println();
         }
-        System.out.println("amount of packed parcels: " + result.size());
-        System.out.println("value of parcels: " + list.get_score());
+        
+        System.out.println("amount of packed parcels: " + bestSolution.size());
+        System.out.println("value of parcels: " + maxValue);
         
     }
 }

@@ -1,6 +1,7 @@
 package CargoLoader.Utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MatrixUtils {
     public static int[] create_matrix_row(int[][][] container){
@@ -21,11 +22,21 @@ public class MatrixUtils {
         return result;
     }
 
-    public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution, int[] parcelAmounts){
-        int cutoff = parcelAmounts[0] + parcelAmounts[1] + parcelAmounts[2];
-        int[][][] result = new int[35][8][5];
+    public static void random_sort_parcels(int [][] temp){
+        Random rand_1 = new Random();
+
+        for (int i = 0; i < temp.length; i++) {
+            int swap= rand_1.nextInt(temp.length);
+            int [] temp_1 = temp[swap];
+            temp[swap] = temp[i];
+            temp[i] = temp_1;
+        }
+    }
+
+    public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution){
+        int[][][] result = new int[33][8][5];
         for(int i = 0; i < solution.size(); i++){
-            int[] temp = ArrayUtils.cutoff_left(matrix[solution.get(i)], cutoff);
+            int[] temp = matrix[solution.get(i)];
             int[][][] temp2 = reassemble_container(temp);
             result = merge_containers(result, temp2);
         }
@@ -33,7 +44,7 @@ public class MatrixUtils {
     }
 
     private static int[][][] reassemble_container(int[] in){
-        int[][][] result = new int[35][8][5];
+        int[][][] result = new int[33][8][5];
         int count = 0;
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < result[0].length; j++){
@@ -47,7 +58,7 @@ public class MatrixUtils {
     }
 
     private static int[][][] merge_containers(int[][][] A, int[][][] B){
-        int[][][] result = new int[35][8][5];
+        int[][][] result = new int[33][8][5];
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < result[0].length; j++){
                 for(int k = 0; k < result[0][0].length; k++){

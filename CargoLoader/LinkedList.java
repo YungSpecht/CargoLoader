@@ -3,33 +3,34 @@ package CargoLoader;
 import java.util.ArrayList;
 
 public class LinkedList {
-    ColumnObject header;
+	ColumnObject header;
 	int[][] matrix;
 
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
+
 	int maxValue;
-    int[] parcelAmounts;
-    int[] parcelValues;
 	int solutionsFound;
 	int maxResults;
 
-	public LinkedList(int[][] matrix, int[] parcelAmounts, int[] parcelValue) {
+	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
+		maxValue = 0;
 		this.matrix = matrix;
-        this.parcelAmounts = parcelAmounts;
-        this.parcelValues = parcelValue;
 		createList();
 	}
 
 	public ArrayList<Integer> exactCover(int maxResults) {
+		System.out.println("searching for " + maxResults + " solutions...");
 		this.maxResults = maxResults;
 		search();
+		System.out.println("\ndone\n");
 		return bestSolution;
 	}
 
 	void createList() {
+		System.out.println("creating exact cover linked list...");
 		header = new ColumnObject(-1);
 
 		// add column objects
@@ -54,24 +55,21 @@ public class LinkedList {
 				}
 			}
 		}
+		System.out.println("done");
 	}
 
 	int search() {
-        prune();
-		if (solutionsFound >= maxResults){
-            return 0;
-        }
-
+		prune();
+		if (solutionsFound >= maxResults) return 0;
 		if (header.R == header) {
-			int check = valueOf(partialSolution);
-			if (check > valueOf(bestSolution)){
-                bestSolution = new ArrayList<>(partialSolution);
-				maxValue = check;
-            }
+			if (valueOf(partialSolution) > valueOf(bestSolution)){
+				bestSolution = new ArrayList<>(partialSolution);
+				maxValue = valueOf(bestSolution);
+			}
+			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
 			solutionsFound++;
 			return valueOf(partialSolution);
 		}
-
 
 		ColumnObject c = smallestColumn();
 		c.cover();
@@ -91,7 +89,7 @@ public class LinkedList {
 		return 0;
 	}
 
-    void prune(){
+	void prune(){
         for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
             if(i.size == 0){
                 i.cover();
@@ -122,24 +120,29 @@ public class LinkedList {
 		return valueOf(partialSolution);
 	}
 
-	int get_score(){
+	int get_max_value(){
 		return maxValue;
 	}
 
-	int valueOf(ArrayList<Integer> partialSolution) {
-		int score = 0;
-        for(int i = 0; i < partialSolution.size(); i++){
-            if(partialSolution.get(i) < parcelAmounts[0]){
-                score += parcelValues[0];
-            }
-            else if(partialSolution.get(i) < parcelAmounts[0] + parcelAmounts[1]){
-                score += parcelValues[1];
-            }
-            else{
-                score += parcelValues[2];
-            }
-        }
-        return score;
+	int valueOf(ArrayList<Integer> rows) {
+		int result = 0;
+		for(int i = 0; i < rows.size(); i++){
+			for(int c = 0; c < matrix[0].length; c++){
+				if(matrix[rows.get(i)][c] != 0){
+					if(matrix[rows.get(i)][c] == 1){
+						result += 3;
+					}
+					else if(matrix[rows.get(i)][c] == 2){
+						result += 4;
+					}
+					else{
+						result += 5;
+					}
+					break;
+				}
+			}
+		}
+		return result;
 	}
 }
 
@@ -208,3 +211,4 @@ class ColumnObject extends DataObject {
 		R.L = this;
 	}
 }
+

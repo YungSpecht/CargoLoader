@@ -4,9 +4,9 @@ import CargoLoader.Utils.*;
 import CargoLoader.MatrixCreation.Parcels.*;
 
 public class MatrixCreator {
-    public static int[][] create_matrix(int A, int B, int C){
+    public static int[][] create_matrix(){
+        System.out.println("\nCreating 2D exact cover matrix ...");
         int[][] result = new int[0][0];
-        int width = A + B + C;
 
         //create an instance of each parcel type
         ABlock aBlock = new ABlock();
@@ -15,24 +15,18 @@ public class MatrixCreator {
 
         //for each parcel type, simulate all placements insde the container
         int[][] simA = simulate_placements(aBlock);
+        //System.out.println("simA " + simA.length);
         int[][] simB = simulate_placements(bBlock);
+        //System.out.println("simB " + simB.length);
         int[][] simC = simulate_placements(cBlock);
+        //System.out.println("simC " + simC.length);
 
-        //for every parcel, create a unique identifier so the same parcel can't be placed twice in different orientaions
-        for(int i = 0; i < width; i++){
-            if(i < A){
-                int[][] preA = MatrixUtils.create_pre_matrix(simA.length, width, i);
-                result = ArrayUtils.add(result, ArrayUtils.add_perpendicular(preA, simA));
-            }
-            else if(i < A + B){
-                int[][] preB = MatrixUtils.create_pre_matrix(simB.length, width, i);
-                result = ArrayUtils.add(result, ArrayUtils.add_perpendicular(preB, simB));
-            }
-            else{
-                int[][] preC = MatrixUtils.create_pre_matrix(simC.length, width, i);
-                result = ArrayUtils.add(result, ArrayUtils.add_perpendicular(preC, simC));
-            }
-        }
+        result = ArrayUtils.add(result, simA);
+        result = ArrayUtils.add(result, simB);
+        result = ArrayUtils.add(result, simC);
+
+        System.out.println("Done");
+        System.out.println("Exact cover matrix size: " + result.length + "x" + result[0].length);
         return result;
     }
 
@@ -80,7 +74,7 @@ public class MatrixCreator {
         parcel.set_row_position(0);
 
         //place the parcel inside the contatainer in every possible position
-        while(parcel.get_length_position() <= 35 - parcel.get_parcel_length()){
+        while(parcel.get_length_position() <= 33 - parcel.get_parcel_length()){
             while(parcel.get_row_position() <= 8 - parcel.get_parcel_rows()){
                 while(parcel.get_col_position() <= 5 - parcel.get_parcel_cols()){
                     int[][][] temp = parcel.place_parcel();

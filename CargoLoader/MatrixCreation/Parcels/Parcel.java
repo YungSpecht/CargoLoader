@@ -67,7 +67,7 @@ public class Parcel {
      * according to it's coordinates 
      */
     public int[][][] place_parcel(){
-        int[][][] result = new int[35][8][5];
+        int[][][] result = new int[33][8][5];
         for(int i = 0; i < shape.length; i++){
             for(int j = 0; j < shape[i].length; j++){
                 for(int k = 0; k < shape[i][j].length; k++){
