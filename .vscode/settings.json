@@ -1,0 +1,13 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx-swt.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.base.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.controls.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.fxml.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.graphics.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.media.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.swing.jar",
+        "/Users/niklas/Downloads/javafx-sdk-17.0.1/lib/javafx.web.jar"
+    ]
+}

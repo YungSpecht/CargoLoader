@@ -5,7 +5,7 @@ import CargoLoader.MatrixCreation.MatrixCreator;
 import CargoLoader.MatrixCreation.Parcels.Parcel;
 
 public class Program {
-    public static final int[] parcelAmounts = {5, 5, 5};
+    public static final int[] parcelAmounts = {100, 100, 100};
 
     public static void main(String[] args) {
         //create 2d cover matrix
@@ -13,10 +13,11 @@ public class Program {
         
         //create linked list from matrix and run DLX on it
         LinkedList list = new LinkedList(matrix);
-        ArrayList<Integer> result = list.exactCover(1000);
+        ArrayList<Integer> result = list.exactCover(500);
 
         //build the resulting cargo container
         int[][][] finalContainer = Parcel.build_container(matrix, result);
+        Multiple.call(finalContainer);
         
         
         //print the cargo container

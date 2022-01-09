@@ -1,6 +1,7 @@
 package CargoLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LinkedList {
 	ColumnObject header;
@@ -8,6 +9,7 @@ public class LinkedList {
 
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
+	int[] parcelCount;
 
 	int maxValue;
 	int solutionsFound;
@@ -16,6 +18,7 @@ public class LinkedList {
 	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
+		parcelCount = new int[3];
 		maxValue = 0;
 		this.matrix = matrix;
 		createList();
@@ -69,19 +72,33 @@ public class LinkedList {
 			solutionsFound++;
 			return valueOf(partialSolution);
 		}
+		if(Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()){
+			if (valueOf(partialSolution) > valueOf(bestSolution)){
+				bestSolution = new ArrayList<>(partialSolution);
+				maxValue = valueOf(partialSolution);
+			}
+			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+			solutionsFound++;
+			return valueOf(partialSolution);
+		}
 
 		ColumnObject c = smallestColumn();
 		c.cover();
 
 		int bestValue = -1;
 		for (DataObject i = c.D; i != c; i = i.D) {
-			partialSolution.add(i.row);
-			for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
-			int newValue = search();
-			partialSolution.remove(partialSolution.size() - 1);
-			for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
-			if (newValue <= bestValue) break;
-			else bestValue = newValue;
+			int parcelType = get_parcel_type(i.row);
+			if(parcelCount[parcelType - 1] < Program.parcelAmounts[parcelType - 1]){
+				partialSolution.add(i.row);
+				parcelCount[parcelType - 1]++;
+				for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
+				int newValue = search();
+				partialSolution.remove(partialSolution.size() - 1);
+				parcelCount[parcelType - 1]--;
+				for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
+				if (newValue <= bestValue) break;
+				else bestValue = newValue;
+			}
 		}
 
 		c.uncover();
@@ -98,6 +115,15 @@ public class LinkedList {
 			}
 		}
 		return minCol;
+	}
+
+	int get_parcel_type(int row){
+		for(int i = 0; i < matrix[0].length; i++){
+			if(matrix[row][i] != 0){
+				return matrix[row][i];
+			}
+		}
+		return 0;
 	}
 
 	boolean allColumnsEmpty() {

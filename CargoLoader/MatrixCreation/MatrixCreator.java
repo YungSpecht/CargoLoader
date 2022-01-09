@@ -1,8 +1,6 @@
 package CargoLoader.MatrixCreation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import CargoLoader.MatrixCreation.Parcels.*;
 
 public class MatrixCreator {
@@ -22,20 +20,20 @@ public class MatrixCreator {
     }
 
     private static void simulate_placements(Parcel parcel){
-        if(parcel instanceof CBlock){
-            add_rows(parcel);
-        }
-        else if(parcel instanceof ABlock){
+        if(parcel instanceof ABlock){
             add_rows(parcel); parcel.rotate_z();
             add_rows(parcel); parcel.rotate_y();
             add_rows(parcel);
         }
-        else{
+        else if(parcel instanceof BBlock){
             add_rows(parcel); parcel.rotate_y();
             add_rows(parcel); parcel.rotate_z();
             add_rows(parcel); parcel.rotate_x();
             add_rows(parcel); parcel.rotate_y();
             add_rows(parcel); parcel.rotate_z();
+            add_rows(parcel);
+        }
+        else{
             add_rows(parcel);
         }
     }
@@ -46,9 +44,7 @@ public class MatrixCreator {
             while(parcel.get_row_position() <= 8 - parcel.get_parcel_rows()){
                 while(parcel.get_col_position() <= 5 - parcel.get_parcel_cols()){
                     int[]row = parcel.place_parcel();
-                    //if(is_distinct(row)){
-                        result.add(row);
-                    //}
+                    result.add(row);
                     parcel.increase_col_position();
                 }
                 parcel.set_col_position(0);
@@ -65,15 +61,5 @@ public class MatrixCreator {
             matrix[r] = result.get(r);
         }
         return matrix;
-    }
-
-    private static boolean is_distinct(int[] row){
-        for(int i = 0; i < result.size(); i++){
-            if(Arrays.equals(result.get(i), row)){
-                return false;
-            }
-            
-        }
-        return true;
     }
 }
