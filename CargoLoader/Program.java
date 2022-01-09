@@ -2,12 +2,10 @@ package CargoLoader;
 
 import java.util.ArrayList;
 import CargoLoader.MatrixCreation.MatrixCreator;
-import CargoLoader.Utils.MatrixUtils;
+import CargoLoader.MatrixCreation.Parcels.Parcel;
 
 public class Program {
-    public static final int A = 1;
-    public static final int B = 1;
-    public static final int C = 1;
+    public static final int[] parcelAmounts = {5, 5, 5};
 
     public static void main(String[] args) {
         //create 2d cover matrix
@@ -15,10 +13,11 @@ public class Program {
         
         //create linked list from matrix and run DLX on it
         LinkedList list = new LinkedList(matrix);
-        ArrayList<Integer> result = list.exactCover(5);
+        ArrayList<Integer> result = list.exactCover(1000);
 
         //build the resulting cargo container
-        int[][][] finalContainer = MatrixUtils.build_container(matrix, result);
+        int[][][] finalContainer = Parcel.build_container(matrix, result);
+        
         
         //print the cargo container
         for(int r = 0; r < finalContainer[0].length; r++){
@@ -33,7 +32,6 @@ public class Program {
         }
         
         System.out.println("amount of packed parcels: " + result.size());
-        System.out.println("value of parcels: " + list.get_max_value());
-        
+        System.out.println("value of parcels: " + list.get_value());
     }
 }

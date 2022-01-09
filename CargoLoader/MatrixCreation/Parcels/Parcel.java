@@ -1,5 +1,7 @@
 package CargoLoader.MatrixCreation.Parcels;
 
+import java.util.ArrayList;
+
 public class Parcel {
     private int lenPos;
     private int rowPos;
@@ -63,10 +65,16 @@ public class Parcel {
         colPos = Pos;
     }
 
+    public void reset_coordinates(){
+        lenPos = 0;
+        rowPos = 0;
+        colPos = 0;
+    }
+
     /* returns a 3d array representation of the cargo container with the parcel placed inside of it
      * according to it's coordinates 
      */
-    public int[][][] place_parcel(){
+    public int[] place_parcel(){
         int[][][] result = new int[33][8][5];
         for(int i = 0; i < shape.length; i++){
             for(int j = 0; j < shape[i].length; j++){
@@ -75,11 +83,11 @@ public class Parcel {
                 }
             }
         }
-        return  result;
+        return transform_container(result);
     }
 
     //rotate parcel once around the y-axis
-    public void rotate_parcel(){
+    public void rotate_z(){
         int[][][] result = new int[shape[0][0].length][shape[0].length][shape.length];
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < result[i].length; j++){
@@ -92,32 +100,70 @@ public class Parcel {
     }
    
     //rotate parcel around the x-axis
-    public void tip_parcel_right(int times){
-        for(int y = 0; y < times; y++){
-            int[][][] result = new int[shape.length][shape[0][0].length][shape[0].length];
-            for(int i = 0; i < result.length; i++){
-                for(int j = 0; j < result[i].length; j++){
-                    for(int k = 0; k < result[i][j].length; k++){
-                        result[i][j][k] = id;
-                    }
+    public void rotate_x(){
+        int[][][] result = new int[shape.length][shape[0][0].length][shape[0].length];
+        for(int i = 0; i < result.length; i++){
+            for(int j = 0; j < result[i].length; j++){
+                for(int k = 0; k < result[i][j].length; k++){
+                    result[i][j][k] = id;
                 }
             }
-            shape = result;
         }
+        shape = result;
     }
 
     //rotate parcel around the y-axis
-    public void tip_parcel_forward(int times){
-        for(int y = 0; y < times; y++){
-            int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
-            for(int i = 0; i < result.length; i++){
-                for(int j = 0; j < result[i].length; j++){
-                    for(int k = 0; k < result[i][j].length; k++){
-                        result[i][j][k] = id;
+    public void rotate_y(){
+        int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
+        for(int i = 0; i < result.length; i++){
+            for(int j = 0; j < result[i].length; j++){
+                for(int k = 0; k < result[i][j].length; k++){
+                    result[i][j][k] = id;
+                }
+            }
+        }
+        shape = result;
+    }
+
+    private int[] transform_container(int[][][] container){
+        int[] result = new int[container.length * container[0].length * container[0][0].length];
+        int counter = 0;
+        for(int i = 0; i < container.length; i++){
+            for(int j = 0; j < container[0].length; j++){
+                for(int k = 0; k < container[0][0].length; k++){
+                    result[counter] = container[i][j][k];
+                    counter++;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution){
+        int[][][] result = new int[33][8][5];
+        for(int i = 0; i < solution.size(); i++){
+            int[] row = matrix[solution.get(i)];
+            int count = 0;
+            int[][][] temp = new int[33][8][5];
+            for(int j = 0; j < result.length; j++){
+                for(int k = 0; k < result[0].length; k++){
+                    for(int l = 0; l < result[0][0].length; l++){
+                        temp[j][k][l] = row[count];
+                        count++;
                     }
                 }
             }
-            shape = result;
+            for(int j = 0; j < result.length; j++){
+                for(int k = 0; k < result[0].length; k++){
+                    for(int l = 0; l < result[0][0].length; l++){
+                        if(temp[j][k][l] != 0){
+                            result[j][k][l] = temp[j][k][l];
+                        }
+                    }
+                }
+            }
+
         }
+        return result;
     }
 }

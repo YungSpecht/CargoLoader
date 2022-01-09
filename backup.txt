@@ -8,29 +8,30 @@ public class LinkedList {
 
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
+	ArrayList<DataObject> rowAccess;
 
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
+	int[] parcelCounter;
 
 	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
+		rowAccess = new ArrayList<DataObject>();
 		maxValue = 0;
+		parcelCounter = new int[3];
 		this.matrix = matrix;
 		createList();
 	}
 
 	public ArrayList<Integer> exactCover(int maxResults) {
-		System.out.println("searching for " + maxResults + " solutions...");
 		this.maxResults = maxResults;
 		search();
-		System.out.println("\ndone");
 		return bestSolution;
 	}
 
 	void createList() {
-		System.out.println("creating exact cover linked list...");
 		header = new ColumnObject(-1);
 
 		// add column objects
@@ -45,9 +46,13 @@ public class LinkedList {
 		for (int i = 0; i < matrix.length; i++) {
 			DataObject prev = null;
 			for (int j = 0; j < matrix[0].length; j++) {
+				boolean check = true;
 				if (matrix[i][j] != 0) {
 					ColumnObject col = getCol(j);
 					DataObject newNode = new DataObject(col, i);
+					if(check){
+						rowAccess.add(newNode);
+					}
 					if (prev == null) prev = newNode;
 					col.U.addBelow(newNode);
 					prev.addRight(newNode);
@@ -55,17 +60,24 @@ public class LinkedList {
 				}
 			}
 		}
-		System.out.println("done");
 	}
 
 	int search() {
+		prune();
 		if (solutionsFound >= maxResults) return 0;
-		if (allColumnsEmpty()) {
+		if (header.R == header) {
 			if (valueOf(partialSolution) > valueOf(bestSolution)){
 				bestSolution = new ArrayList<>(partialSolution);
-				maxValue = valueOf(partialSolution);
+				maxValue = valueOf(bestSolution);
 			}
-			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+			solutionsFound++;
+			return valueOf(partialSolution);
+		}
+		else if(parcelCounter[0] + parcelCounter[1] + parcelCounter[2] == Program.parcelAmounts[0] + Program.parcelAmounts[1] + Program.parcelAmounts[2]){
+			if (valueOf(partialSolution) > valueOf(bestSolution)){
+				bestSolution = new ArrayList<>(partialSolution);
+				maxValue = valueOf(bestSolution);
+			}
 			solutionsFound++;
 			return valueOf(partialSolution);
 		}
@@ -73,26 +85,44 @@ public class LinkedList {
 		ColumnObject c = smallestColumn();
 		c.cover();
 
-		int bestValue = -1;
+		int prevValue = -1;
 		for (DataObject i = c.D; i != c; i = i.D) {
-			partialSolution.add(i.row);
-			for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
-			int newValue = search();
-			partialSolution.remove(partialSolution.size() - 1);
-			for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
-			if (newValue <= bestValue) break;
-			else bestValue = newValue;
+			int parcelType = get_parcel_type(i.row);
+			if(parcelCounter[parcelType - 1] < Program.parcelAmounts[parcelType - 1]){
+				partialSolution.add(i.row);
+				track_row(i.row);
+				for (DataObject j = i.R; j != i; j = j.R){
+					j.C.cover();
+				}
+			
+				int newValue = search();
+				partialSolution.remove(partialSolution.size() - 1);
+				untrack_row(i.row);
+				for (DataObject j = i.L; j != i; j = j.L){
+					j.C.uncover();
+				}
+				if (newValue <= prevValue) break;
+				else prevValue = newValue;
+			}
 		}
 
 		c.uncover();
-		return bestValue != -1 ? bestValue : 0;
+		return 0;
 	}
+
+	void prune(){
+        for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
+            if(i.size == 0){
+                i.cover();
+            }
+		}
+    }
 
 	ColumnObject smallestColumn() {
 		int minSize = Integer.MAX_VALUE;
 		ColumnObject minCol = null;
 		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
-			if (i.size < minSize && i.size != 0) {
+			if (i.size < minSize) {
 				minSize = i.size;
 				minCol = i;
 			}
@@ -100,18 +130,19 @@ public class LinkedList {
 		return minCol;
 	}
 
-	boolean allColumnsEmpty() {
-		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
-			if (i.size != 0) return false;
-		}
-		return true;
-	}
-
 	ColumnObject getCol(int id) {
 		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
 			if (i.id == id) return i;
 		}
 		return null;
+	}
+
+	int matrix() {
+		return valueOf(partialSolution);
+	}
+
+	int get_max_value(){
+		return maxValue;
 	}
 
 	int valueOf(ArrayList<Integer> rows) {
@@ -135,10 +166,41 @@ public class LinkedList {
 		return result;
 	}
 
-	int get_value(){
-		return maxValue;
+	void track_row(int row){
+		if(get_parcel_type(row) == 1){
+			parcelCounter[0] += 1;
+		}
+		else if(get_parcel_type(row) == 2){
+			parcelCounter[1] += 1;
+		}
+		else{
+			parcelCounter[2] += 1;
+		}
+	}
+
+	void untrack_row(int row){
+		if(get_parcel_type(row) == 1){
+			parcelCounter[0] -= 1;
+		}
+		else if(get_parcel_type(row) == 2){
+			parcelCounter[0] -= 1;
+		}
+		else{
+			parcelCounter[0] -= 1;
+		}
+	}
+
+	int get_parcel_type(int row){
+		for(int i = 0; i < matrix[0].length; i++){
+			if(matrix[row][i] != 0){
+				return matrix[row][i];
+			}
+		}
+		return 0;
 	}
 }
+
+
 
 class DataObject {
 	DataObject L, R, U, D;
@@ -167,6 +229,16 @@ class DataObject {
 		other.L = this;
 		R.L = other;
 		R = other;
+	}
+
+	void remove(){
+		D.U = U;
+		U.D = D;
+	}
+
+	void restore(){
+		U.D = this;
+		D.U = this;
 	}
 }
 
@@ -205,3 +277,4 @@ class ColumnObject extends DataObject {
 		R.L = this;
 	}
 }
+
