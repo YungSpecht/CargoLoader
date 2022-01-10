@@ -62,16 +62,7 @@ public class LinkedList {
 	int search() {
 		//The three base cases
 		if (solutionsFound >= maxResults) return 0;
-		if (allColumnsEmpty()) {
-			if (valueOf(partialSolution) > valueOf(bestSolution)){
-				bestSolution = new ArrayList<>(partialSolution);
-				maxValue = valueOf(partialSolution);
-			}
-			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
-			solutionsFound++;
-			return valueOf(partialSolution);
-		}
-		if(Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()){
+		if (allColumnsEmpty() || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
 			if (valueOf(partialSolution) > valueOf(bestSolution)){
 				bestSolution = new ArrayList<>(partialSolution);
 				maxValue = valueOf(partialSolution);
@@ -150,7 +141,7 @@ public class LinkedList {
 	int valueOf(ArrayList<Integer> rows) {
 		int result = 0;
 		for(int i = 0; i < rows.size(); i++){
-			result += get_parcel_type(rows.get(i) + 2);
+			result += get_parcel_type(rows.get(i)) + 2;
 		}
 		return result;
 	}
