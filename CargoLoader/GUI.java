@@ -22,7 +22,7 @@ import javafx.scene.transform.Transform;
 import javafx.stage.*;
 import java.util.ArrayList;
 
-public class Multiple extends Application {
+public class GUI extends Application {
     public static final int WIDTH = 1400;
     public static final int HEIGHT = 750;
     public static int cubeSize = 25;

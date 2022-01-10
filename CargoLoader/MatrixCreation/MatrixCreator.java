@@ -5,20 +5,19 @@ import CargoLoader.MatrixCreation.Parcels.*;
 
 public class MatrixCreator {
     static ArrayList<int[]> result = new ArrayList<int[]>();
-
     static ABlock aBlock = new ABlock();
     static BBlock bBlock = new BBlock();
     static CBlock cBlock = new CBlock();
 
+    //Simulate placements for each parcel type
     public static int[][] create_matrix(){
-        System.out.println("Creating 2D exact cover matrix ...");
-        //for each parcel type, simulate all placements insde the container
         simulate_placements(cBlock);
         simulate_placements(aBlock);
         simulate_placements(bBlock);
         return build_matrix();
     }
 
+    //Call the add_rows() method for each distinct rotation
     private static void simulate_placements(Parcel parcel){
         if(parcel instanceof ABlock){
             add_rows(parcel); parcel.rotate_z();
@@ -38,6 +37,7 @@ public class MatrixCreator {
         }
     }
 
+    //Place the parcel in each possible position inside the container
     private static void add_rows(Parcel parcel){
         parcel.reset_coordinates();
         while(parcel.get_length_position() <= 33 - parcel.get_parcel_length()){
@@ -55,6 +55,7 @@ public class MatrixCreator {
         }
     }
 
+    //Convert the ArrayList of rows into a 2D int array
     private static int[][] build_matrix(){
         int[][] matrix = new int[result.size()][result.get(0).length];
         for(int r = 0; r < matrix.length; r++){

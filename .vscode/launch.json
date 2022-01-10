@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Program",
+            "request": "launch",
+            "mainClass": "CargoLoader.Program",
+            "projectName": "CargoLoader_bada013c"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

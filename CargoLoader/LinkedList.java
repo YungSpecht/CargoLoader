@@ -25,15 +25,13 @@ public class LinkedList {
 	}
 
 	public ArrayList<Integer> exactCover(int maxResults) {
-		System.out.println("searching for " + maxResults + " solutions...");
 		this.maxResults = maxResults;
 		search();
-		System.out.println("\ndone");
 		return bestSolution;
 	}
 
+	//Create a Linked List from the 2D exact-cover matrix
 	void createList() {
-		System.out.println("creating exact cover linked list...");
 		header = new ColumnObject(-1);
 
 		// add column objects
@@ -58,10 +56,11 @@ public class LinkedList {
 				}
 			}
 		}
-		System.out.println("done");
 	}
 
+	//Recursive function that finds the solution providing most packed value
 	int search() {
+		//The three base cases
 		if (solutionsFound >= maxResults) return 0;
 		if (allColumnsEmpty()) {
 			if (valueOf(partialSolution) > valueOf(bestSolution)){
@@ -82,16 +81,20 @@ public class LinkedList {
 			return valueOf(partialSolution);
 		}
 
+		//finding the column that contains the least amount of nodes and covering it
 		ColumnObject c = smallestColumn();
 		c.cover();
 
 		int bestValue = -1;
+		//for each node in that column:
 		for (DataObject i = c.D; i != c; i = i.D) {
 			int parcelType = get_parcel_type(i.row);
+			//add the corersponding row to the partial solution if specified amount hasn't been reached yet
 			if(parcelCount[parcelType - 1] < Program.parcelAmounts[parcelType - 1]){
 				partialSolution.add(i.row);
 				parcelCount[parcelType - 1]++;
 				for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
+				//recursive call on reduced linked list
 				int newValue = search();
 				partialSolution.remove(partialSolution.size() - 1);
 				parcelCount[parcelType - 1]--;
@@ -105,6 +108,7 @@ public class LinkedList {
 		return bestValue != -1 ? bestValue : 0;
 	}
 
+	//Returns the column containing the least amount of nodes
 	ColumnObject smallestColumn() {
 		int minSize = Integer.MAX_VALUE;
 		ColumnObject minCol = null;
@@ -117,6 +121,7 @@ public class LinkedList {
 		return minCol;
 	}
 
+	//Returns the parcel identifier of a matrix row
 	int get_parcel_type(int row){
 		for(int i = 0; i < matrix[0].length; i++){
 			if(matrix[row][i] != 0){
@@ -126,6 +131,7 @@ public class LinkedList {
 		return 0;
 	}
 
+	//Checks wether all remaining columns contain no nodes
 	boolean allColumnsEmpty() {
 		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
 			if (i.size != 0) return false;
@@ -140,23 +146,11 @@ public class LinkedList {
 		return null;
 	}
 
+	//Evaluates the value of the current partial solution
 	int valueOf(ArrayList<Integer> rows) {
 		int result = 0;
 		for(int i = 0; i < rows.size(); i++){
-			for(int c = 0; c < matrix[0].length; c++){
-				if(matrix[rows.get(i)][c] != 0){
-					if(matrix[rows.get(i)][c] == 1){
-						result += 3;
-					}
-					else if(matrix[rows.get(i)][c] == 2){
-						result += 4;
-					}
-					else{
-						result += 5;
-					}
-					break;
-				}
-			}
+			result += get_parcel_type(rows.get(i) + 2);
 		}
 		return result;
 	}

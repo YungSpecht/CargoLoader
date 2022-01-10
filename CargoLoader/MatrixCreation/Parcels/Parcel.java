@@ -125,6 +125,7 @@ public class Parcel {
         shape = result;
     }
 
+    //Turn a 3D array into a 1D array
     private int[] transform_container(int[][][] container){
         int[] result = new int[container.length * container[0].length * container[0][0].length];
         int counter = 0;
@@ -139,6 +140,7 @@ public class Parcel {
         return result;
     }
 
+    //Assemble the resulting cargo container based on the matrix and result from the Algorithm
     public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution){
         int[][][] result = new int[33][8][5];
         for(int i = 0; i < solution.size(); i++){
