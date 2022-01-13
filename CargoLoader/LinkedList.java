@@ -24,9 +24,12 @@ public class LinkedList {
 		createList();
 	}
 
-	public ArrayList<Integer> exactCover(int maxResults) {
+	public ArrayList<Integer> exactCover(int maxResults, char mode) {
 		this.maxResults = maxResults;
-		search();
+		switch(mode){
+			case 'b': search(); break;
+			case 'p': search(); break;
+		}
 		return bestSolution;
 	}
 
@@ -61,6 +64,15 @@ public class LinkedList {
 	//Recursive function that finds the solution providing most packed value
 	int search() {
 		//The three base cases
+		if(header.R == header){
+			if (valueOf(partialSolution) > valueOf(bestSolution)){
+				bestSolution = new ArrayList<>(partialSolution);
+				maxValue = valueOf(partialSolution);
+			}
+			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+			solutionsFound++;
+			return valueOf(partialSolution);
+		}
 		if (solutionsFound >= maxResults) return 0;
 		if (allColumnsEmpty() || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
 			if (valueOf(partialSolution) > valueOf(bestSolution)){

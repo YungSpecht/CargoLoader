@@ -7,14 +7,18 @@ public class Parcel {
     private int rowPos;
     private int colPos;
     private int[][][] shape;
-    private int id;
+    public char id;
 
-    public Parcel(int[][][] shape, int id){
+    public Parcel(int[][][] shape, char id){
         lenPos = 0;
         rowPos = 0;
         colPos = 0;
         this.shape = shape;
         this.id = id;
+    }
+
+    public int[][][] get_shape(){
+        return shape;
     }
 
     public int get_length_position(){
@@ -79,20 +83,20 @@ public class Parcel {
         for(int i = 0; i < shape.length; i++){
             for(int j = 0; j < shape[i].length; j++){
                 for(int k = 0; k < shape[i][j].length; k++){
-                    result[i + lenPos][j + rowPos][k + colPos] = id;
+                    result[i + lenPos][j + rowPos][k + colPos] = shape[i][j][k];
                 }
             }
         }
         return transform_container(result);
     }
 
-    //rotate parcel once around the y-axis
+    //rotate parcel once around the z-axis
     public void rotate_z(){
         int[][][] result = new int[shape[0][0].length][shape[0].length][shape.length];
-        for(int i = 0; i < result.length; i++){
-            for(int j = 0; j < result[i].length; j++){
-                for(int k = 0; k < result[i][j].length; k++){
-                    result[i][j][k] = id;
+        for(int i = 0; i < shape[0].length; i++){
+            for(int j = 0; j < shape[0][0].length; j++){
+                for(int k = 0; k < shape.length; k++){
+                    result[j][i][result[0][0].length - 1 - k] = shape[k][i][j];
                 }
             }
         }
@@ -102,10 +106,10 @@ public class Parcel {
     //rotate parcel around the x-axis
     public void rotate_x(){
         int[][][] result = new int[shape.length][shape[0][0].length][shape[0].length];
-        for(int i = 0; i < result.length; i++){
-            for(int j = 0; j < result[i].length; j++){
-                for(int k = 0; k < result[i][j].length; k++){
-                    result[i][j][k] = id;
+        for(int i = 0; i < shape.length; i++){
+            for(int j = 0; j < shape[0][0].length; j++){
+                for(int k = 0; k < shape[0].length; k++){
+                    result[i][j][result[0][0].length - 1 - k] = shape[i][k][j];
                 }
             }
         }
@@ -115,15 +119,16 @@ public class Parcel {
     //rotate parcel around the y-axis
     public void rotate_y(){
         int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
-        for(int i = 0; i < result.length; i++){
-            for(int j = 0; j < result[i].length; j++){
-                for(int k = 0; k < result[i][j].length; k++){
-                    result[i][j][k] = id;
+        for(int i = 0; i < shape[0][0].length; i++){
+            for(int j = 0; j < shape.length; j++){
+                for(int k = 0; k < shape[0].length; k++){
+                    result[result.length - 1 - k][j][i] = shape[j][k][i];
                 }
             }
         }
         shape = result;
     }
+    
 
     //Turn a 3D array into a 1D array
     private int[] transform_container(int[][][] container){
