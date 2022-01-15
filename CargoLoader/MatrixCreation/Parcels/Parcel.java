@@ -7,14 +7,12 @@ public class Parcel {
     private int rowPos;
     private int colPos;
     private int[][][] shape;
-    public char id;
 
-    public Parcel(int[][][] shape, char id){
+    public Parcel(int[][][] shape){
         lenPos = 0;
         rowPos = 0;
         colPos = 0;
         this.shape = shape;
-        this.id = id;
     }
 
     public int[][][] get_shape(){

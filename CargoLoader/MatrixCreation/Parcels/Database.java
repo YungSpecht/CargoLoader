@@ -1,6 +1,6 @@
 package CargoLoader.MatrixCreation.Parcels;
 
-public class Representations {
+public class Database {
     public static int[][][] A = {
         {{ 1 , 1 , 1 , 1 },
          { 1 , 1 , 1 , 1 }},

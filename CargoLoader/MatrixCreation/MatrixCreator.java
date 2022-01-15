@@ -1,18 +1,16 @@
 package CargoLoader.MatrixCreation;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-
 import CargoLoader.MatrixCreation.Parcels.*;
 
 public class MatrixCreator {
     static ArrayList<int[]> result = new ArrayList<int[]>();
-    static Parcel aBlock = new Parcel(Representations.A, 'A');
-    static Parcel bBlock = new Parcel(Representations.B, 'B');
-    static Parcel cBlock = new Parcel(Representations.C, 'C');
-    static Parcel LPento = new Parcel(Representations.L, 'L');
-    static Parcel PPento = new Parcel(Representations.P, 'P');
-    static Parcel TPento = new Parcel(Representations.T, 'T');
+    static Parcel aBlock = new Parcel(Database.A);
+    static Parcel bBlock = new Parcel(Database.B);
+    static Parcel cBlock = new Parcel(Database.C);
+    static Parcel LPento = new Parcel(Database.L);
+    static Parcel PPento = new Parcel(Database.P);
+    static Parcel TPento = new Parcel(Database.T);
 
     //Simulate placements for each parcel type
     public static int[][] create_matrix(char mode){
@@ -25,7 +23,7 @@ public class MatrixCreator {
     }
 
     //Call the add_rows() method for each distinct rotation
-    public static void simulate_placements(Parcel parcel){
+    private static void simulate_placements(Parcel parcel){
         ArrayList<int[][][]> orientations = new ArrayList<int[][][]>();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {

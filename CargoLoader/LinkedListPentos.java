@@ -1,18 +1,22 @@
 package CargoLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class LinkedList2 {
+public class LinkedListPentos {
 	ColumnObject header;
 	int[][] matrix;
 
+    int[] parcelCount;
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
 
+    int maxValue;
 	int solutionsFound;
 	int maxResults;
 
-	public LinkedList2(int[][] matrix) {
+	public LinkedListPentos(int[][] matrix) {
+        parcelCount = new int[3];
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
 		this.matrix = matrix;
@@ -59,11 +63,27 @@ public class LinkedList2 {
 
 	int search() {
 		if (solutionsFound >= maxResults) return 0;
-		if (header.R == header) {
-			if (valueOf(partialSolution) > valueOf(bestSolution)) bestSolution = new ArrayList<>(partialSolution);
-			System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
-			solutionsFound++;
-			return valueOf(partialSolution);
+		switch(Program.coverMode){
+			case 'e' :
+			if (header.R == header) {
+				if (valueOf(partialSolution) > valueOf(bestSolution)){
+					bestSolution = new ArrayList<>(partialSolution);
+					maxValue = valueOf(partialSolution);
+				}
+				System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+				solutionsFound++;
+				return valueOf(partialSolution);
+			} break;
+			case 'p' : 
+			if (header.R == header || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
+				if (valueOf(partialSolution) > valueOf(bestSolution)){
+					bestSolution = new ArrayList<>(partialSolution);
+					maxValue = valueOf(partialSolution);
+				}
+				System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+				solutionsFound++;
+				return valueOf(partialSolution);
+			} break;
 		}
 
 		ColumnObject c = smallestColumn();
@@ -71,13 +91,21 @@ public class LinkedList2 {
 
 		int bestValue = -1;
 		for (DataObject i = c.D; i != c; i = i.D) {
-			partialSolution.add(i.row);
-			for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
-			int newValue = search();
-			partialSolution.remove(partialSolution.size() - 1);
-			for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
-			if (newValue <= bestValue) break;
-			else bestValue = newValue;
+			//parcel Type can be 1(A Box/L Pento), 2(B Box/P Pento) or 3(C Box/T Pento)
+            int parcelType = get_parcel_type(i.row);
+			//this if-statement checks wether the desired amount for the parcel type of the current row has already 
+			//been reached. If so it will not add the row to the partial solution and go on to the next one.
+            if(parcelCount[parcelType - 1] < Program.parcelAmounts[parcelType - 1]){
+                partialSolution.add(i.row);
+                parcelCount[parcelType - 1]++;
+                for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
+                int newValue = search();
+                partialSolution.remove(partialSolution.size() - 1);
+                parcelCount[parcelType - 1]--;
+                for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
+                if (newValue <= bestValue) break;
+                else bestValue = newValue;
+            }
 		}
 
 		c.uncover();
@@ -116,7 +144,7 @@ public class LinkedList2 {
 		return result;
 	}
 
-	//Returns the parcel identifier of a matrix row
+    //Returns the parcel identifier of a matrix row
 	int get_parcel_type(int row){
 		for(int i = 0; i < matrix[0].length; i++){
 			if(matrix[row][i] != 0){
@@ -124,6 +152,10 @@ public class LinkedList2 {
 			}
 		}
 		return 0;
+	}
+
+    int get_value(){
+		return maxValue;
 	}
 }
 

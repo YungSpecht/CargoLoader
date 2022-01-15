@@ -3,8 +3,7 @@ package CargoLoader;
 import javafx.application.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,6 +40,8 @@ public class GUI extends Application {
 
     public static int SelectedGroup = 3;
 
+    public static boolean showPopup = false;
+
     private double AnchorX, AnchorY;
     private double anchorAngleX = 0;
     private double anchorAngleY = 0;
@@ -52,27 +53,31 @@ public class GUI extends Application {
     public SmartGroup group3 = new SmartGroup();
     SmartGroup group = new SmartGroup();
 
-    public ToggleGroup colorOption = new ToggleGroup();
-    public ToggleGroup groupOption = new ToggleGroup();
+    public static ComboBox<String> movementOptions;
+    public static ComboBox<String> packingOptions;
+
+    public TextField textone = new TextField();
+    public TextField texttwo = new TextField();
+    public TextField textthree = new TextField();
+
+    public static int[] values = new int[3];
 
     ArrayList<SmartGroup> allGroups = new ArrayList<SmartGroup>();
     ArrayList<Box> allBoxes = new ArrayList<Box>();
     ArrayList<PhongMaterial> allMaterials = new ArrayList<PhongMaterial>();
 
-    public static void call(int[][][] in) {
-        endMatrix = in;
+    public static void call() {
         launch();
     }
 
     public void start(Stage primaryStage) throws Exception {
 
-        Group endGroup = MakeBigCube(endMatrix);
-
-        group.getChildren().addAll(endGroup);
-
-        allGroups.add(group);
+        // Group endGroup = MakeBigCube(endMatrix);
+        // group.getChildren().addAll(endGroup);
 
         VBox vbox = makeVBox();
+
+        allGroups.add(group);
 
         Group total = new Group();
         total.getChildren().add(vbox);
@@ -85,20 +90,11 @@ public class GUI extends Application {
 
         group.translateXProperty().set(WIDTH / 2);
         group.translateYProperty().set(HEIGHT / 2);
-        group.translateZProperty().set(-500);
+        group.translateZProperty().set(-250);
 
         moveBlock(primaryStage);
 
         initMouseControl(group, scene, primaryStage);
-
-        colorOption.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                if (colorOption.getSelectedToggle() != null) {
-                    changeColor(Integer.parseInt(colorOption.getSelectedToggle().getUserData().toString()));
-                }
-            }
-        });
 
         primaryStage.setTitle("ENDPRODUCT");
         primaryStage.setScene(scene);
@@ -125,6 +121,7 @@ public class GUI extends Application {
             allGroups.get(i).translateXProperty().set(0);
             allGroups.get(i).translateYProperty().set(0);
             allGroups.get(i).translateZProperty().set(0);
+            ;
         }
 
         group.translateXProperty().set(WIDTH / 2);
@@ -134,37 +131,102 @@ public class GUI extends Application {
     }
 
     public void splitUp() {
-        group1.translateZProperty().set(cubeSize * depth );
-        group3.translateZProperty().set(-cubeSize * depth * 1.3);
+        group1.translateXProperty().set(cubeSize * width * 2);
+        group3.translateXProperty().set(-cubeSize * width * 2);
     }
 
     public VBox makeVBox() {
         VBox vbox = new VBox();
         HBox hbox = makeHBox();
-        RadioButton box1 = new RadioButton("Color");
-        box1.setUserData(0);
-        box1.setSelected(true);
-        RadioButton box2 = new RadioButton("No Color");
-        box2.setUserData(1);
-        RadioButton box3 = new RadioButton("Piece A");
-        box3.setUserData(0);
-        RadioButton box4 = new RadioButton("Piece B");
-        box4.setUserData(1);
-        RadioButton box5 = new RadioButton("Piece C");
-        box5.setUserData(2);
-        RadioButton box6 = new RadioButton("Whole Box");
-        box6.setUserData(3);
-        box6.setSelected(true);
 
-        box1.setToggleGroup(colorOption);
-        box2.setToggleGroup(colorOption);
-        box3.setToggleGroup(groupOption);
-        box4.setToggleGroup(groupOption);
-        box5.setToggleGroup(groupOption);
-        box6.setToggleGroup(groupOption);
+        Label labelOne = new Label("Amount of piece A ");
+        Label labeltwo = new Label("Amount of piece B ");
+        Label labelThree = new Label("Amoutn of piece C ");
 
-        vbox.getChildren().addAll(hbox, box1, box2, box3, box4, box5, box6);
+        HBox hbox1 = smallHbox(labelOne, textone);
+        HBox hbox2 = smallHbox(labeltwo, texttwo);
+        HBox hbox3 = smallHbox(labelThree, textthree);
+
+        textone.setMaxWidth(50);
+        texttwo.setMaxWidth(50);
+        textthree.setMaxWidth(50);
+
+        vbox.getChildren().addAll(hbox, hbox1, hbox2, hbox3);
         return vbox;
+    }
+
+    public HBox smallHbox(Label label, TextField textfield) {
+        HBox hbox = new HBox();
+        hbox.setPadding(new Insets(5, 5, 5, 5));
+        hbox.setSpacing(10);
+        hbox.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        hbox.setMaxWidth(195);
+        hbox.getChildren().addAll(label, textfield);
+        return hbox;
+    }
+
+    public ComboBox<String> ColorBox() {
+        String[] options = { "Color", "No color" };
+        ComboBox<String> colors = new ComboBox<String>(FXCollections.observableArrayList(options));
+        colors.getSelectionModel().selectFirst();
+
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                String str = colors.getValue();
+                if (str.equals("Color")) {
+                    changeColor(0);
+                } else
+                    changeColor(1);
+            }
+        };
+        colors.setOnAction(event);
+        return colors;
+
+    }
+
+    public ComboBox<String> chooseBox() {
+        String[] options = { "Parcels", "Pentominoes" };
+        ComboBox<String> packing = new ComboBox<String>(FXCollections.observableArrayList(options));
+        packing.getSelectionModel().selectFirst();
+        return packing;
+    }
+
+    public ComboBox<String> moveBox() {
+        String[] options = { "Container", "Piece A", "Piece B", "Piece C" };
+        ComboBox<String> moveoptions = new ComboBox<String>(FXCollections.observableArrayList(options));
+        moveoptions.getSelectionModel().selectFirst();
+        return moveoptions;
+    }
+
+    public static int[] getvalues() {
+        return values;
+    }
+
+    public void RUN() {
+        if (packingOptions.getValue().equals("Parcels")) {
+
+            values[0] = Integer.parseInt(textone.getText());
+            values[1] = Integer.parseInt(texttwo.getText());
+            values[2] = Integer.parseInt(textthree.getText());
+
+            Program.parcelMode = 'b';
+            Program.parcelAmounts = getvalues();
+
+            endMatrix = Program.solveBox();
+
+        } else if (packingOptions.getValue().equals("Pentominoes")) {
+
+            values[0] = Integer.parseInt(textone.getText());
+            values[1] = Integer.parseInt(texttwo.getText());
+            values[2] = Integer.parseInt(textthree.getText());
+
+            Program.parcelMode = 'p';
+            Program.parcelAmounts = getvalues();
+            endMatrix = Program.solvePento();
+        }
+
+        Group endGroup = MakeBigCube(endMatrix);
+        group.getChildren().add(endGroup);
     }
 
     public HBox makeHBox() {
@@ -188,6 +250,21 @@ public class GUI extends Application {
                 splitUp();
             }
         });
+
+        Button buttonActivate = new Button("Run Program");
+        hbox.getChildren().add(buttonActivate);
+        buttonActivate.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                RUN();
+            }
+        });
+        packingOptions = chooseBox();
+        hbox.getChildren().add(packingOptions);
+        ComboBox<String> colorss = ColorBox();
+        hbox.getChildren().add(colorss);
+        movementOptions = moveBox();
+        hbox.getChildren().add(movementOptions);
+        hbox.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         return hbox;
     }
 
@@ -270,31 +347,39 @@ public class GUI extends Application {
 
     private void moveBlock(Stage stage) {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            SelectedGroup = Integer.parseInt(groupOption.getSelectedToggle().getUserData().toString());
+            String str = movementOptions.getValue();
+            if (str.equals("Container"))
+                SelectedGroup = 0;
+            else if (str.equals("Piece A"))
+                SelectedGroup = 1;
+            else if (str.equals("Piece B"))
+                SelectedGroup = 3;
+            else if (str.equals("Piece C"))
+                SelectedGroup = 2;
             switch (event.getCode()) {
                 case A:
                     allGroups.get(SelectedGroup).translateXProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateX() - 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateX() - (cubeSize + gap));
                     break;
                 case D:
                     allGroups.get(SelectedGroup).translateXProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateX() + 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateX() + (cubeSize + gap));
                     break;
                 case S:
                     allGroups.get(SelectedGroup).translateYProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateY() + 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateY() + (cubeSize + gap));
                     break;
                 case W:
                     allGroups.get(SelectedGroup).translateYProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateY() - 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateY() - (cubeSize + gap));
                     break;
                 case Q:
                     allGroups.get(SelectedGroup).translateZProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateZ() - 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateZ() - (cubeSize + gap));
                     break;
                 case E:
                     allGroups.get(SelectedGroup).translateZProperty()
-                            .set(allGroups.get(SelectedGroup).getTranslateZ() + 10);
+                            .set(allGroups.get(SelectedGroup).getTranslateZ() + (cubeSize + gap));
                     break;
                 default:
                     break;
