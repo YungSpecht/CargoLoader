@@ -2,25 +2,40 @@ package CargoLoader.MatrixCreation.Parcels;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a Parcel that can be placed inside the cargo space
+ * @author Kai Kitagawa-Jones
+ * @author Niklas Druba
+ * @author Cui Qi
+ * @author Yu Fei
+ */
 public class Parcel {
-    private int lenPos;
+    private int depPos;
     private int rowPos;
     private int colPos;
     private int[][][] shape;
+    public char id;
 
-    public Parcel(int[][][] shape){
-        lenPos = 0;
+     /**
+	 * Creates a Parcel object. A parcel is created based on the provided shape matrix and a parcel-type identifier
+	 * @param shape a 3D int array that servers as a representation of the shape of the parcel
+     * @param id a char that serves as an identifier of the parcel type
+	 * @return A fully initialized parcel object
+	 */
+    public Parcel(int[][][] shape, char id){
+        depPos = 0;
         rowPos = 0;
         colPos = 0;
         this.shape = shape;
+        this.id = id;
     }
 
     public int[][][] get_shape(){
         return shape;
     }
 
-    public int get_length_position(){
-        return lenPos;
+    public int get_depth_position(){
+        return depPos;
     }
 
     public int get_row_position(){
@@ -31,64 +46,70 @@ public class Parcel {
         return colPos;
     }
 
-    public int get_parcel_length(){
+    public int get_parcel_depth(){
         return shape.length;
     }
 
-    public  int get_parcel_rows(){
+    public  int get_parcel_height(){
         return shape[0].length;
     }
 
-    public int get_parcel_cols(){
+    public int get_parcel_width(){
         return shape[0][0].length;
     }
     
-    public void increase_length_position(){
-        lenPos++;
+    public void increase_depth_position(){
+        depPos++;
     }
 
-    public void increase_row_position(){
+    public void increase_height_position(){
         rowPos++;
     }
 
-    public void increase_col_position(){
+    public void increase_width_position(){
         colPos++;
     }
 
-    public void set_length_position(int Pos){
-        lenPos = Pos;
+    public void set_depth_position(int Pos){
+        depPos = Pos;
     }
 
-    public void set_row_position(int Pos){
+    public void set_height_position(int Pos){
         rowPos = Pos;
     }
 
-    public void set_col_position(int Pos){
+    public void set_width_position(int Pos){
         colPos = Pos;
     }
 
+    /**
+	 * Resets the depth, height and width coordinates of the parcel inside the cargo space
+	 */
     public void reset_coordinates(){
-        lenPos = 0;
+        depPos = 0;
         rowPos = 0;
         colPos = 0;
     }
 
-    /* returns a 3d array representation of the cargo container with the parcel placed inside of it
-     * according to it's coordinates 
-     */
+    /**
+	 * Places the cargo inside the cargo space according to the parcels current coordinates
+	 * @return a 3D-int array of the cargo space with the parcel placed inside of according to its coordinates
+	 */
     public int[] place_parcel(){
         int[][][] result = new int[33][8][5];
         for(int i = 0; i < shape.length; i++){
             for(int j = 0; j < shape[i].length; j++){
                 for(int k = 0; k < shape[i][j].length; k++){
-                    result[i + lenPos][j + rowPos][k + colPos] = shape[i][j][k];
+                    result[i + depPos][j + rowPos][k + colPos] = shape[i][j][k];
                 }
             }
         }
         return transform_container(result);
     }
 
-    //rotate parcel once around the z-axis
+    /**
+	 * Rotates the shape instance field of the parcel object once along the z-axis
+	 */
     public void rotate_z(){
         int[][][] result = new int[shape[0][0].length][shape[0].length][shape.length];
         for(int i = 0; i < shape[0].length; i++){
@@ -101,7 +122,9 @@ public class Parcel {
         shape = result;
     }
    
-    //rotate parcel around the x-axis
+    /**
+	 * Rotates the shape instance field of the parcel object once along the x-axis
+	 */
     public void rotate_x(){
         int[][][] result = new int[shape.length][shape[0][0].length][shape[0].length];
         for(int i = 0; i < shape.length; i++){
@@ -114,7 +137,9 @@ public class Parcel {
         shape = result;
     }
 
-    //rotate parcel around the y-axis
+    /**
+	 * Rotates the shape instance field of the parcel object once along the y-axis
+	 */
     public void rotate_y(){
         int[][][] result = new int[shape[0].length][shape.length][shape[0][0].length];
         for(int i = 0; i < shape[0][0].length; i++){
@@ -143,7 +168,12 @@ public class Parcel {
         return result;
     }
 
-    //Assemble the resulting cargo container based on the matrix and result from the Algorithm
+    /**
+	 * Builds the 3D representation of the cargo space according to the rows of the 2D exact cover matrix returned by Algorithm X
+	 * @param matrix The 2D exact cover matrix initially created by the create_matrix() method
+     * @param solution ArrayList of rows of the exact cover matrix that have been selected by ALgorithm X
+	 * @return A 3D int array representing the cargo space with all the desired parcel placed inside of it
+	 */
     public static int[][][] build_container(int[][] matrix, ArrayList<Integer> solution){
         int[][][] result = new int[33][8][5];
         for(int i = 0; i < solution.size(); i++){

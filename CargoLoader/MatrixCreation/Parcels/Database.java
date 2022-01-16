@@ -1,5 +1,12 @@
 package CargoLoader.MatrixCreation.Parcels;
 
+/**
+ * A class that contains 3D int arrays representing the different Parcel Types
+ * @author Kai Kitagawa-Jones
+ * @author Niklas Druba
+ * @author Cui Qi
+ * @author Yu Fei
+ */
 public class Database {
     public static int[][][] A = {
         {{ 1 , 1 , 1 , 1 },

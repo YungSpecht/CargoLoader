@@ -3,25 +3,48 @@ package CargoLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Represents a doubly-linked list, and contains methods to find the exact cover to the list.
+ * @author Kai Kitagawa-Jones
+ * @author Niklas Druba
+ * @author Yu Fei
+ */
+
 public class LinkedListPentos {
 	ColumnObject header;
 	int[][] matrix;
 
-    int[] parcelCount;
+	int[] parcelCount;
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
 
-    int maxValue;
+	int maxValue;
 	int solutionsFound;
 	int maxResults;
 
+	/**
+	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
+	 * exactCover() method can be called immediately.
+	 * @param matrix An 2D integer array that Algorithm X should be applied to. 0 represents an empty cell, and a non-0
+	 *     number represents a occupied cell.
+	 * @return A fully initialized LinkedListPentos object
+	 */
+
 	public LinkedListPentos(int[][] matrix) {
-        parcelCount = new int[3];
+		parcelCount = new int[3];
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
 		this.matrix = matrix;
 		createList();
 	}
+
+	/**
+	 * Returns the best solution to the doubly-linked list created in the constructor method within a specified number
+	 * of solutions.
+	 * @param maxResults The number of results to be processed before terminating.
+	 * @return An ArrayList containing the row numbers of the rows in the array provided in the constructor that make up
+	 *     the best solution.
+	 */
 
 	public ArrayList<Integer> exactCover(int maxResults) {
 		System.out.println("searching for " + maxResults + " solutions...");
@@ -63,27 +86,32 @@ public class LinkedListPentos {
 
 	int search() {
 		if (solutionsFound >= maxResults) return 0;
-		switch(Program.coverMode){
-			case 'e' :
-			if (header.R == header) {
-				if (valueOf(partialSolution) > valueOf(bestSolution)){
-					bestSolution = new ArrayList<>(partialSolution);
-					maxValue = valueOf(partialSolution);
+		switch (Program.coverMode) {
+			case 'e':
+				if (header.R == header) {
+					if (valueOf(partialSolution) > valueOf(bestSolution)) {
+						bestSolution = new ArrayList<>(partialSolution);
+						maxValue = valueOf(partialSolution);
+						System.out.println("\nNew solution found, value: " + maxValue);
+					}
+					System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+					solutionsFound++;
+					return valueOf(partialSolution);
 				}
-				System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
-				solutionsFound++;
-				return valueOf(partialSolution);
-			} break;
-			case 'p' : 
-			if (header.R == header || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
-				if (valueOf(partialSolution) > valueOf(bestSolution)){
-					bestSolution = new ArrayList<>(partialSolution);
-					maxValue = valueOf(partialSolution);
+				break;
+			case 'p':
+				if (header.R == header ||
+					Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
+					if (valueOf(partialSolution) > valueOf(bestSolution)) {
+						bestSolution = new ArrayList<>(partialSolution);
+						maxValue = valueOf(partialSolution);
+						System.out.println("\nNew solution found, value: " + maxValue);
+					}
+					System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+					solutionsFound++;
+					return valueOf(partialSolution);
 				}
-				System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
-				solutionsFound++;
-				return valueOf(partialSolution);
-			} break;
+				break;
 		}
 
 		ColumnObject c = smallestColumn();
@@ -91,21 +119,21 @@ public class LinkedListPentos {
 
 		int bestValue = -1;
 		for (DataObject i = c.D; i != c; i = i.D) {
-			//parcel Type can be 1(A Box/L Pento), 2(B Box/P Pento) or 3(C Box/T Pento)
-            int parcelType = get_parcel_type(i.row);
-			//this if-statement checks wether the desired amount for the parcel type of the current row has already 
-			//been reached. If so it will not add the row to the partial solution and go on to the next one.
-            if(parcelCount[parcelType - 1] < Program.parcelAmounts[parcelType - 1]){
-                partialSolution.add(i.row);
-                parcelCount[parcelType - 1]++;
-                for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
-                int newValue = search();
-                partialSolution.remove(partialSolution.size() - 1);
-                parcelCount[parcelType - 1]--;
-                for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
-                if (newValue <= bestValue) break;
-                else bestValue = newValue;
-            }
+			// parcel Type can be 1(A Box/L Pento), 2(B Box/P Pento) or 3(C Box/T Pento)
+			int parcelType = get_parcel_type(i.row);
+			// this if-statement checks wether the desired amount for the parcel type of the current row has already
+			// been reached. If so it will not add the row to the partial solution and go on to the next one.
+			if (parcelCount[parcelType - 1] < Program.parcelAmounts[parcelType - 1]) {
+				partialSolution.add(i.row);
+				parcelCount[parcelType - 1]++;
+				for (DataObject j = i.R; j != i; j = j.R) j.C.cover();
+				int newValue = search();
+				partialSolution.remove(partialSolution.size() - 1);
+				parcelCount[parcelType - 1]--;
+				for (DataObject j = i.L; j != i; j = j.L) j.C.uncover();
+				if (newValue <= bestValue) break;
+				else bestValue = newValue;
+			}
 		}
 
 		c.uncover();
@@ -135,26 +163,26 @@ public class LinkedListPentos {
 		return valueOf(partialSolution);
 	}
 
-	//Evaluates the value of the current partial solution
+	// Evaluates the value of the current partial solution
 	int valueOf(ArrayList<Integer> rows) {
 		int result = 0;
-		for(int i = 0; i < rows.size(); i++){
+		for (int i = 0; i < rows.size(); i++) {
 			result += get_parcel_type(rows.get(i)) + 2;
 		}
 		return result;
 	}
 
-    //Returns the parcel identifier of a matrix row
-	int get_parcel_type(int row){
-		for(int i = 0; i < matrix[0].length; i++){
-			if(matrix[row][i] != 0){
+	// Returns the parcel identifier of a matrix row
+	int get_parcel_type(int row) {
+		for (int i = 0; i < matrix[0].length; i++) {
+			if (matrix[row][i] != 0) {
 				return matrix[row][i];
 			}
 		}
 		return 0;
 	}
 
-    int get_value(){
+	int get_value() {
 		return maxValue;
 	}
 }

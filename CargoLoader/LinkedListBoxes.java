@@ -3,6 +3,13 @@ package CargoLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Represents a doubly-linked list, and contains methods to find the exact cover to the list.
+ * @author Kai Kitagawa-Jones
+ * @author Niklas Druba
+ * @author Cui Qi
+ */
+
 public class LinkedListBoxes {
 	ColumnObject header;
 	int[][] matrix;
@@ -14,6 +21,14 @@ public class LinkedListBoxes {
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
+
+	/**
+	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
+	 * exactCover() method can be called immediately.
+	 * @param matrix An 2D integer array that Algorithm X should be applied to. 0 represents an empty cell, and a non-0
+	 *     number represents a occupied cell.
+	 * @return A fully initialized LinkedListPentos object
+	 */
 
 	public LinkedListBoxes(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();

@@ -1,5 +1,7 @@
 package CargoLoader;
 
+import java.util.ArrayList;
+
 import javafx.application.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -19,7 +21,6 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.stage.*;
-import java.util.ArrayList;
 
 public class GUI extends Application {
     public static final int WIDTH = 1400;
@@ -41,6 +42,8 @@ public class GUI extends Application {
     public static int SelectedGroup = 3;
 
     public static boolean showPopup = false;
+    public static boolean partialCover = true;
+    public static boolean exactCover = false;
 
     private double AnchorX, AnchorY;
     private double anchorAngleX = 0;
@@ -52,13 +55,18 @@ public class GUI extends Application {
     public SmartGroup group2 = new SmartGroup();
     public SmartGroup group3 = new SmartGroup();
     SmartGroup group = new SmartGroup();
+    public Group total = new Group();
 
     public static ComboBox<String> movementOptions;
     public static ComboBox<String> packingOptions;
+    public static ComboBox<String> coverMode;
 
     public TextField textone = new TextField();
     public TextField texttwo = new TextField();
     public TextField textthree = new TextField();
+
+    public Label value = new Label("Total value = ");
+    public Label amount = new Label("Total used parcels = ");
 
     public static int[] values = new int[3];
 
@@ -66,21 +74,18 @@ public class GUI extends Application {
     ArrayList<Box> allBoxes = new ArrayList<Box>();
     ArrayList<PhongMaterial> allMaterials = new ArrayList<PhongMaterial>();
 
+    public VBox mainVbox = makeVBox();
+
     public static void call() {
         launch();
     }
 
+    // initiates scene, stage and camera
     public void start(Stage primaryStage) throws Exception {
-
-        // Group endGroup = MakeBigCube(endMatrix);
-        // group.getChildren().addAll(endGroup);
-
-        VBox vbox = makeVBox();
 
         allGroups.add(group);
 
-        Group total = new Group();
-        total.getChildren().add(vbox);
+        total.getChildren().add(mainVbox);
         total.getChildren().add(group);
 
         Scene scene = new Scene(total, WIDTH, HEIGHT, true);
@@ -101,6 +106,7 @@ public class GUI extends Application {
         primaryStage.show();
     }
 
+    // changes the color of the box
     public void changeColor(int x) {
         if (x == 0) {
             for (int i = 0; i < allBoxes.size(); i++) {
@@ -115,9 +121,10 @@ public class GUI extends Application {
         }
     }
 
+    // relocate the container to the middle of the screen
     public void relocate() {
 
-        for (int i = 0; i < allGroups.size() - 1; i++) {
+        for (int i = 0; i < allGroups.size(); i++) {
             allGroups.get(i).translateXProperty().set(0);
             allGroups.get(i).translateYProperty().set(0);
             allGroups.get(i).translateZProperty().set(0);
@@ -130,14 +137,34 @@ public class GUI extends Application {
 
     }
 
+    // splits the container in to three groups of parcels
     public void splitUp() {
         group1.translateXProperty().set(cubeSize * width * 2);
         group3.translateXProperty().set(-cubeSize * width * 2);
     }
 
+    // adds the info of the algorithm
+    public void addInfo(int parcelAmount, int parcelValue) {
+        value.setText("Total value = " + parcelValue);
+        amount.setText("Total used parcels = " + parcelAmount);
+    }
+
+    // creates the VBox were the information will be displayed
+    public VBox InformationVBox() {
+        VBox vbox = new VBox();
+        vbox.setPadding(new Insets(5, 5, 5, 5));
+        vbox.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        vbox.setMaxWidth(195);
+        vbox.setSpacing(10);
+        vbox.getChildren().addAll(amount, value);
+        return vbox;
+    }
+
+    // construct the main VBox that consists of multiple HBox's and vbox
     public VBox makeVBox() {
         VBox vbox = new VBox();
         HBox hbox = makeHBox();
+        VBox info = InformationVBox();
 
         Label labelOne = new Label("Amount of piece A ");
         Label labeltwo = new Label("Amount of piece B ");
@@ -151,10 +178,11 @@ public class GUI extends Application {
         texttwo.setMaxWidth(50);
         textthree.setMaxWidth(50);
 
-        vbox.getChildren().addAll(hbox, hbox1, hbox2, hbox3);
+        vbox.getChildren().addAll(hbox, hbox1, hbox2, hbox3, info);
         return vbox;
     }
 
+    // makes a Horizontal box to were you can enter the amount of each piece
     public HBox smallHbox(Label label, TextField textfield) {
         HBox hbox = new HBox();
         hbox.setPadding(new Insets(5, 5, 5, 5));
@@ -165,11 +193,13 @@ public class GUI extends Application {
         return hbox;
     }
 
+    // makes the comboBox for the color options
     public ComboBox<String> ColorBox() {
         String[] options = { "Color", "No color" };
         ComboBox<String> colors = new ComboBox<String>(FXCollections.observableArrayList(options));
         colors.getSelectionModel().selectFirst();
 
+        // adds a eventhandler to act when a different options is choosen
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 String str = colors.getValue();
@@ -184,6 +214,7 @@ public class GUI extends Application {
 
     }
 
+    // makes the combobox for picken parcel or pentomino
     public ComboBox<String> chooseBox() {
         String[] options = { "Parcels", "Pentominoes" };
         ComboBox<String> packing = new ComboBox<String>(FXCollections.observableArrayList(options));
@@ -191,6 +222,7 @@ public class GUI extends Application {
         return packing;
     }
 
+    // makes the combobox of choosing which part will be moving
     public ComboBox<String> moveBox() {
         String[] options = { "Container", "Piece A", "Piece B", "Piece C" };
         ComboBox<String> moveoptions = new ComboBox<String>(FXCollections.observableArrayList(options));
@@ -198,21 +230,70 @@ public class GUI extends Application {
         return moveoptions;
     }
 
+    // makes the comboboc of partial cover or exact cover
+    public ComboBox<String> coverBox() {
+        String[] options = { "Partial cover", "Exact cover" };
+        ComboBox<String> coverOptions = new ComboBox<String>(FXCollections.observableArrayList(options));
+        coverOptions.getSelectionModel().selectFirst();
+
+        // adds a eventhandler for when there is activity on this combobox
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                String str = coverMode.getValue();
+                if (str.equals("Partial cover")) {
+                    partialCover = true;
+                    exactCover = false;
+                    System.out.println("partialCover");
+                } else {
+                    partialCover = false;
+                    exactCover = true;
+                    System.out.println("exactCover");
+                }
+            }
+        };
+        coverOptions.setOnAction(event);
+        return coverOptions;
+    }
+
+    // return the amount of
     public static int[] getvalues() {
         return values;
     }
 
+    // will be activated when the run Program button is clicked,
+    // it will call the algotihm and it will call a method to draw the container
     public void RUN() {
+        group1.getChildren().clear();
+        group2.getChildren().clear();
+        group3.getChildren().clear();
+        relocate();
+        Group endGroup = new Group();
+        Program.finalAmount = 0;
+        Program.finalValue = 0;
         if (packingOptions.getValue().equals("Parcels")) {
 
             values[0] = Integer.parseInt(textone.getText());
             values[1] = Integer.parseInt(texttwo.getText());
             values[2] = Integer.parseInt(textthree.getText());
 
-            Program.parcelMode = 'b';
             Program.parcelAmounts = getvalues();
 
-            endMatrix = Program.solveBox();
+            Program.parcelMode = 'p';
+
+            if (partialCover) {
+                Program.coverMode = 'p';
+                endMatrix = Program.solveBox();
+                addInfo(Program.finalAmount, Program.finalValue);
+                // endMatrix = ...
+                // addinfo(parcelAmount, totalValue)
+
+            } else if (exactCover) {
+                Program.coverMode = 'e';
+                endMatrix = new int[33][8][5];
+                addInfo(0, 0);
+                // endMatrix = ...
+                // addinfo(parcelAmount, totalValue)
+            }
 
         } else if (packingOptions.getValue().equals("Pentominoes")) {
 
@@ -220,15 +301,40 @@ public class GUI extends Application {
             values[1] = Integer.parseInt(texttwo.getText());
             values[2] = Integer.parseInt(textthree.getText());
 
-            Program.parcelMode = 'p';
             Program.parcelAmounts = getvalues();
-            endMatrix = Program.solvePento();
+
+            if (partialCover) {
+                Program.coverMode = 'p';
+                endMatrix = Program.solvePento();
+                addInfo(Program.finalAmount, Program.finalValue);
+                // endMatrix = ...
+                // addinfo(parcelAmount, totalValue)
+
+            } else if (exactCover) {
+                Program.coverMode = 'e';
+                endMatrix = Program.solvePento();
+                
+                for(int i = 0; i < endMatrix[0].length; i++){
+                    for(int j = 0; j < endMatrix[0][0].length; j++){
+                        for(int k = 0; k < endMatrix.length; k++){
+                            System.out.print(endMatrix[k][i][j]);
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
+                }
+
+                addInfo(Program.finalAmount, Program.finalValue);
+                // endMatrix = ...
+                // addinfo(parcelAmount, totalValue)
+            }
         }
 
-        Group endGroup = MakeBigCube(endMatrix);
+        endGroup = MakeBigCube(endMatrix);
         group.getChildren().add(endGroup);
     }
 
+    // makes the top horizontal box with all the buttons and comboboxes
     public HBox makeHBox() {
         HBox hbox = new HBox();
         hbox.setSpacing(10);
@@ -260,6 +366,8 @@ public class GUI extends Application {
         });
         packingOptions = chooseBox();
         hbox.getChildren().add(packingOptions);
+        coverMode = coverBox();
+        hbox.getChildren().add(coverMode);
         ComboBox<String> colorss = ColorBox();
         hbox.getChildren().add(colorss);
         movementOptions = moveBox();
@@ -268,6 +376,8 @@ public class GUI extends Application {
         return hbox;
     }
 
+    // this method goes through the 3d array that has been created and gives order
+    // where to draw wich box
     public Group MakeBigCube(int[][][] in) {
         Group group = new Group();
 
@@ -310,6 +420,7 @@ public class GUI extends Application {
         return group;
     }
 
+    // this method draws the box on comman of the previous method
     Box createBox(int i, int j, int k, int l) {
         int xOff = widthMiddle * (cubeSize + gap);
         int yOff = heightMiddle * (cubeSize + gap);
@@ -345,6 +456,8 @@ public class GUI extends Application {
         return make;
     }
 
+    // this method installs an eventhandler for when a key is pressed so the
+    // container can move
     private void moveBlock(Stage stage) {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             String str = movementOptions.getValue();
@@ -353,9 +466,9 @@ public class GUI extends Application {
             else if (str.equals("Piece A"))
                 SelectedGroup = 1;
             else if (str.equals("Piece B"))
-                SelectedGroup = 3;
-            else if (str.equals("Piece C"))
                 SelectedGroup = 2;
+            else if (str.equals("Piece C"))
+                SelectedGroup = 3;
             switch (event.getCode()) {
                 case A:
                     allGroups.get(SelectedGroup).translateXProperty()
@@ -387,6 +500,8 @@ public class GUI extends Application {
         });
     }
 
+    // this method installs a mouse listener so you can move the block around with
+    // your mouse
     private void initMouseControl(SmartGroup group, Scene scene, Stage stage) {
         Rotate xRotate;
         Rotate yRotate;
@@ -419,6 +534,7 @@ public class GUI extends Application {
         });
     }
 
+    // this makes a group able to turn in every direction
     class SmartGroup extends Group {
         Rotate r;
         Transform t = new Rotate();

@@ -7,10 +7,12 @@ import java.util.ArrayList;
 public class Program {
 	public static int[] parcelAmounts;
 	public static char parcelMode;
-	public static char coverMode = 'p';
-    public static final int maxResults = 1000;
+	public static char coverMode;
+    public static final int maxResults = 10000;
     public static int[][] boxMatrix;
     public static int[][] pentoMatrix;
+    public static int finalAmount;
+    public static int finalValue;
 
     public static void main(String[] args) {
         boxMatrix = MatrixCreator.create_matrix('b');
@@ -22,6 +24,9 @@ public class Program {
 		ArrayList<Integer> result = new ArrayList<Integer>();
         LinkedListBoxes list = new LinkedListBoxes(boxMatrix);
         result = list.exactCover(maxResults);
+        finalAmount = result.size();
+        finalValue = list.get_value();
+        System.out.println(list.get_value());
         return Parcel.build_container(boxMatrix, result);
     }
 
@@ -29,6 +34,8 @@ public class Program {
 		ArrayList<Integer> result = new ArrayList<Integer>();
         LinkedListPentos list = new LinkedListPentos(pentoMatrix);
         result = list.exactCover(maxResults);
+        finalAmount = result.size();
+        finalValue = list.get_value();
         return Parcel.build_container(pentoMatrix, result);
     }
 }
