@@ -101,7 +101,7 @@ public class GUI extends Application {
 
         initMouseControl(group, scene, primaryStage);
 
-        primaryStage.setTitle("ENDPRODUCT");
+        primaryStage.setTitle("CargoLoader");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -270,64 +270,36 @@ public class GUI extends Application {
         Group endGroup = new Group();
         Program.finalAmount = 0;
         Program.finalValue = 0;
+        values[0] = Integer.parseInt(textone.getText());
+        values[1] = Integer.parseInt(texttwo.getText());
+        values[2] = Integer.parseInt(textthree.getText());
+        Program.parcelAmounts = getvalues();
+
         if (packingOptions.getValue().equals("Parcels")) {
 
-            values[0] = Integer.parseInt(textone.getText());
-            values[1] = Integer.parseInt(texttwo.getText());
-            values[2] = Integer.parseInt(textthree.getText());
-
-            Program.parcelAmounts = getvalues();
-
-            Program.parcelMode = 'p';
+            Program.parcelMode = 'b';
 
             if (partialCover) {
                 Program.coverMode = 'p';
-                endMatrix = Program.solveBox();
+                endMatrix = Program.solve();
                 addInfo(Program.finalAmount, Program.finalValue);
-                // endMatrix = ...
-                // addinfo(parcelAmount, totalValue)
 
             } else if (exactCover) {
                 Program.coverMode = 'e';
                 endMatrix = new int[33][8][5];
                 addInfo(0, 0);
-                // endMatrix = ...
-                // addinfo(parcelAmount, totalValue)
             }
 
         } else if (packingOptions.getValue().equals("Pentominoes")) {
-
-            values[0] = Integer.parseInt(textone.getText());
-            values[1] = Integer.parseInt(texttwo.getText());
-            values[2] = Integer.parseInt(textthree.getText());
-
-            Program.parcelAmounts = getvalues();
-
+            Program.parcelMode = 'p';
             if (partialCover) {
                 Program.coverMode = 'p';
-                endMatrix = Program.solvePento();
-                addInfo(Program.finalAmount, Program.finalValue);
-                // endMatrix = ...
-                // addinfo(parcelAmount, totalValue)
-
-            } else if (exactCover) {
-                Program.coverMode = 'e';
-                endMatrix = Program.solvePento();
-                
-                for(int i = 0; i < endMatrix[0].length; i++){
-                    for(int j = 0; j < endMatrix[0][0].length; j++){
-                        for(int k = 0; k < endMatrix.length; k++){
-                            System.out.print(endMatrix[k][i][j]);
-                        }
-                        System.out.println();
-                    }
-                    System.out.println();
-                }
-
-                addInfo(Program.finalAmount, Program.finalValue);
-                // endMatrix = ...
-                // addinfo(parcelAmount, totalValue)
             }
+            else{
+                Program.coverMode = 'b';
+            }
+            endMatrix = Program.solve();
+            addInfo(Program.finalAmount, Program.finalValue);
         }
 
         endGroup = MakeBigCube(endMatrix);

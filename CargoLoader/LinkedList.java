@@ -10,13 +10,13 @@ import java.util.Arrays;
  * @author Yu Fei
  */
 
-public class LinkedListPentos {
+public class LinkedList {
 	ColumnObject header;
 	int[][] matrix;
 
-	int[] parcelCount;
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
+	int[] parcelCount;
 
 	int maxValue;
 	int solutionsFound;
@@ -30,10 +30,11 @@ public class LinkedListPentos {
 	 * @return A fully initialized LinkedListPentos object
 	 */
 
-	public LinkedListPentos(int[][] matrix) {
-		parcelCount = new int[3];
+	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
+		parcelCount = new int[3];
+		maxValue = 0;
 		this.matrix = matrix;
 		createList();
 	}
@@ -45,17 +46,13 @@ public class LinkedListPentos {
 	 * @return An ArrayList containing the row numbers of the rows in the array provided in the constructor that make up
 	 *     the best solution.
 	 */
-
 	public ArrayList<Integer> exactCover(int maxResults) {
-		System.out.println("searching for " + maxResults + " solutions...");
 		this.maxResults = maxResults;
 		search();
-		System.out.println("\ndone");
 		return bestSolution;
 	}
 
 	void createList() {
-		System.out.println("creating exact cover linked list...");
 		header = new ColumnObject(-1);
 
 		// add column objects
@@ -80,8 +77,6 @@ public class LinkedListPentos {
 				}
 			}
 		}
-
-		System.out.println("done");
 	}
 
 	int search() {
@@ -92,7 +87,6 @@ public class LinkedListPentos {
 					if (valueOf(partialSolution) > valueOf(bestSolution)) {
 						bestSolution = new ArrayList<>(partialSolution);
 						maxValue = valueOf(partialSolution);
-						System.out.println("\nNew solution found, value: " + maxValue);
 					}
 					System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
 					solutionsFound++;
@@ -100,12 +94,10 @@ public class LinkedListPentos {
 				}
 				break;
 			case 'p':
-				if (header.R == header ||
-					Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum()) {
+				if (header.R == header || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum() || allColumnsEmpty()) {
 					if (valueOf(partialSolution) > valueOf(bestSolution)) {
 						bestSolution = new ArrayList<>(partialSolution);
 						maxValue = valueOf(partialSolution);
-						System.out.println("\nNew solution found, value: " + maxValue);
 					}
 					System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
 					solutionsFound++;
@@ -150,6 +142,13 @@ public class LinkedListPentos {
 			}
 		}
 		return minCol;
+	}
+
+    boolean allColumnsEmpty() {
+		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
+			if (i.size != 0) return false;
+		}
+		return true;
 	}
 
 	ColumnObject getCol(int id) {

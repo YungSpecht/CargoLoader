@@ -14,7 +14,7 @@ public class Parcel {
     private int rowPos;
     private int colPos;
     private int[][][] shape;
-    public char id;
+    private char id;
 
      /**
 	 * Creates a Parcel object. A parcel is created based on the provided shape matrix and a parcel-type identifier
@@ -28,6 +28,10 @@ public class Parcel {
         colPos = 0;
         this.shape = shape;
         this.id = id;
+    }
+
+    public char get_id(){
+        return id;
     }
 
     public int[][][] get_shape(){
