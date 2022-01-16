@@ -40,13 +40,17 @@ public class Program {
             case 'p' : list = new LinkedList(pentoMatrix); break;
             default: list = null;
         }
-        result = list.exactCover(maxResults);
-        finalAmount = result.size();
-        finalValue = list.get_value();
-        switch(parcelMode){
-            case 'b' : return Parcel.build_container(boxMatrix, result);
-            case 'p' : return Parcel.build_container(pentoMatrix, result);
-            default: return new int[0][0][0];
+        try {
+            result = list.exactCover(maxResults);
+            finalAmount = result.size();
+            finalValue = list.get_value();
+            switch(parcelMode){
+                case 'b' : return Parcel.build_container(boxMatrix, result);
+                case 'p' : return Parcel.build_container(pentoMatrix, result);
+                default: return new int[0][0][0];
+            }
+        } catch (Exception noSolutionFound) {
+            return new int[33][8][5];
         }
     }
 }

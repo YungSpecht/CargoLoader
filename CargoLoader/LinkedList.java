@@ -21,6 +21,7 @@ public class LinkedList {
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
+	long timeCheckpoint;
 
 	/**
 	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
@@ -45,9 +46,11 @@ public class LinkedList {
 	 * @param maxResults The number of results to be processed before terminating.
 	 * @return An ArrayList containing the row numbers of the rows in the array provided in the constructor that make up
 	 *     the best solution.
+	 * @throws Exception
 	 */
-	public ArrayList<Integer> exactCover(int maxResults) {
+	public ArrayList<Integer> exactCover(int maxResults) throws Exception {
 		this.maxResults = maxResults;
+		timeCheckpoint = System.currentTimeMillis();
 		search();
 		return bestSolution;
 	}
@@ -79,7 +82,7 @@ public class LinkedList {
 		}
 	}
 
-	int search() {
+	int search() throws Exception{
 		if (solutionsFound >= maxResults) return 0;
 		switch (Program.coverMode) {
 			case 'e':
@@ -104,6 +107,11 @@ public class LinkedList {
 					return valueOf(partialSolution);
 				}
 				break;
+		}
+		long timeCheck = System.currentTimeMillis();
+		if(timeCheck - timeCheckpoint > 3000){
+			Exception exception = new Exception();
+			throw exception;
 		}
 
 		ColumnObject c = smallestColumn();
