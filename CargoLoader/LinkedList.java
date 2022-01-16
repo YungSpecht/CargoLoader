@@ -21,7 +21,6 @@ public class LinkedList {
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
-	long timeCheckpoint;
 
 	/**
 	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
@@ -46,11 +45,9 @@ public class LinkedList {
 	 * @param maxResults The number of results to be processed before terminating.
 	 * @return An ArrayList containing the row numbers of the rows in the array provided in the constructor that make up
 	 *     the best solution.
-	 * @throws Exception
 	 */
-	public ArrayList<Integer> exactCover(int maxResults) throws Exception {
+	public ArrayList<Integer> exactCover(int maxResults) {
 		this.maxResults = maxResults;
-		timeCheckpoint = System.currentTimeMillis();
 		search();
 		return bestSolution;
 	}
@@ -82,7 +79,7 @@ public class LinkedList {
 		}
 	}
 
-	int search() throws Exception{
+	int search() {
 		if (solutionsFound >= maxResults) return 0;
 		switch (Program.coverMode) {
 			case 'e':
@@ -97,7 +94,8 @@ public class LinkedList {
 				}
 				break;
 			case 'p':
-				if (header.R == header || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum() || allColumnsEmpty()) {
+				if (header.R == header ||
+					Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum() || allColumnsEmpty()) {
 					if (valueOf(partialSolution) > valueOf(bestSolution)) {
 						bestSolution = new ArrayList<>(partialSolution);
 						maxValue = valueOf(partialSolution);
@@ -108,13 +106,13 @@ public class LinkedList {
 				}
 				break;
 		}
-		long timeCheck = System.currentTimeMillis();
-		if(timeCheck - timeCheckpoint > 3000){
-			Exception exception = new Exception();
-			throw exception;
-		}
 
-		ColumnObject c = smallestColumn();
+		ColumnObject c;
+		switch(Program.parcelMode){
+			case 'p' : c = smallestColumnPento(); break;
+			case 'b' : c = smallestColumnBox(); break;
+			default : c = null;
+		}
 		c.cover();
 
 		int bestValue = -1;
@@ -140,7 +138,7 @@ public class LinkedList {
 		return bestValue != -1 ? bestValue : 0;
 	}
 
-	ColumnObject smallestColumn() {
+	ColumnObject smallestColumnPento() {
 		int minSize = Integer.MAX_VALUE;
 		ColumnObject minCol = null;
 		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
@@ -152,7 +150,19 @@ public class LinkedList {
 		return minCol;
 	}
 
-    boolean allColumnsEmpty() {
+	ColumnObject smallestColumnBox() {
+		int minSize = Integer.MAX_VALUE;
+		ColumnObject minCol = null;
+		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
+			if (i.size < minSize && i.size != 0) {
+				minSize = i.size;
+				minCol = i;
+			}
+		}
+		return minCol;
+	}
+
+	boolean allColumnsEmpty() {
 		for (ColumnObject i = (ColumnObject)header.R; i != header; i = (ColumnObject)i.R) {
 			if (i.size != 0) return false;
 		}

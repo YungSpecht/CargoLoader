@@ -291,15 +291,19 @@ public class GUI extends Application {
             }
 
         } else if (packingOptions.getValue().equals("Pentominoes")) {
+
             Program.parcelMode = 'p';
+            
             if (partialCover) {
                 Program.coverMode = 'p';
+                endMatrix = Program.solve();
+                addInfo(Program.finalAmount, Program.finalValue);
             }
-            else{
-                Program.coverMode = 'b';
+            else if(exactCover){
+                Program.coverMode = 'e';
+                endMatrix = Program.solve();
+                addInfo(Program.finalAmount, Program.finalValue);
             }
-            endMatrix = Program.solve();
-            addInfo(Program.finalAmount, Program.finalValue);
         }
 
         endGroup = MakeBigCube(endMatrix);
