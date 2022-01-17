@@ -19,7 +19,7 @@ public class Program {
 	public static int[] parcelAmounts;
 	public static char parcelMode;
 	public static char coverMode;
-    public static final int maxResults = 38000;
+    public static final int maxResults = 10000;
     public static final int[][] boxMatrix = MatrixCreator.create_matrix('b');
     public static final int[][] pentoMatrix = MatrixCreator.create_matrix('p');
     public static int finalAmount;
@@ -44,6 +44,7 @@ public class Program {
         try {
             result = list.exactCover(maxResults);
         } catch (Exception noSolutionFound) {
+            System.out.println("No solution found in time");
             return new int[33][8][5];
         }
         finalAmount = result.size();

@@ -22,6 +22,12 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.stage.*;
 
+/**
+ * Class that takes in user input and displays the cargo space in 3D
+ * @author Anton Zegelaar
+ * @author Irena Shaleva
+ */
+
 public class GUI extends Application {
     public static final int WIDTH = 1400;
     public static final int HEIGHT = 750;

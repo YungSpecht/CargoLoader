@@ -8,6 +8,7 @@ import java.util.Arrays;
  * @author Kai Kitagawa-Jones
  * @author Niklas Druba
  * @author Yu Fei
+ * @author Cui Qi
  */
 
 public class LinkedList{
@@ -22,7 +23,6 @@ public class LinkedList{
 	int solutionsFound;
 	int maxResults;
 	double timeCheckPoint;
-	boolean checker;
 
 	/**
 	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
@@ -52,7 +52,6 @@ public class LinkedList{
 	public ArrayList<Integer> exactCover(int maxResults) throws Exception {
 		this.maxResults = maxResults;
 		timeCheckPoint = System.currentTimeMillis();
-		checker = true;
 		search();
 		return bestSolution;
 	}
@@ -99,8 +98,7 @@ public class LinkedList{
 				}
 				break;
 			case 'p':
-				if (header.R == header ||
-					Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum() || allColumnsEmpty()) {
+				if (header.R == header || Arrays.stream(parcelCount).sum() == Arrays.stream(Program.parcelAmounts).sum() || allColumnsEmpty()) {
 					if (valueOf(partialSolution) > valueOf(bestSolution)) {
 						bestSolution = new ArrayList<>(partialSolution);
 						maxValue = valueOf(partialSolution);
@@ -110,10 +108,10 @@ public class LinkedList{
 					return valueOf(partialSolution);
 				}
 				break;
+			default : System.out.println("Invalid mode");
 		}
 
-		if(System.currentTimeMillis() - timeCheckPoint > 3000 && checker){
-			checker = false;
+		if(System.currentTimeMillis() - timeCheckPoint > 5000 && solutionsFound == 0){
 			Exception noSolutionFound = new Exception();
 			throw noSolutionFound;
 		}
