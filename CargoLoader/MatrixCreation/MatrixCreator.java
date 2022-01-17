@@ -47,37 +47,19 @@ public class MatrixCreator {
 
     //Call the add_rows() method for each distinct rotation
     private static void simulate_placements(Parcel parcel, ArrayList<int[]> result){
-        if(parcel.get_id() == 'A'){
-            add_rows(parcel, result); parcel.rotate_z();
-            add_rows(parcel, result); parcel.rotate_y();
-            add_rows(parcel, result);
-        }
-        else if(parcel.get_id() == 'B'){
-            add_rows(parcel, result); parcel.rotate_y();
-            add_rows(parcel, result); parcel.rotate_z();
-            add_rows(parcel, result); parcel.rotate_x();
-            add_rows(parcel, result); parcel.rotate_y();
-            add_rows(parcel, result); parcel.rotate_z();
-            add_rows(parcel, result);
-        }
-        else if(parcel.get_id() == 'C'){
-            add_rows(parcel, result);
-        }
-        else{
-            ArrayList<int[][][]> orientations = new ArrayList<int[][][]>();
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    for (int k = 0; k < 4; k++) {
-                        parcel.rotate_y();
-                        if(orientation_is_distinct(parcel, orientations)){
-                            add_rows(parcel, result);
-                        }
-                        orientations.add(parcel.get_shape());
-                    }
+        ArrayList<int[][][]> orientations = new ArrayList<int[][][]>();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
                     parcel.rotate_z();
+                    if(orientation_is_distinct(parcel, orientations)){
+                        add_rows(parcel, result);
+                    }
+                    orientations.add(parcel.get_shape());
                 }
                 parcel.rotate_x();
             }
+            parcel.rotate_y();
         }
     }
 

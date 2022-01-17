@@ -10,7 +10,7 @@ import java.util.Arrays;
  * @author Yu Fei
  */
 
-public class LinkedList {
+public class LinkedList{
 	ColumnObject header;
 	int[][] matrix;
 
@@ -21,6 +21,8 @@ public class LinkedList {
 	int maxValue;
 	int solutionsFound;
 	int maxResults;
+	double timeCheckPoint;
+	boolean checker;
 
 	/**
 	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
@@ -45,9 +47,12 @@ public class LinkedList {
 	 * @param maxResults The number of results to be processed before terminating.
 	 * @return An ArrayList containing the row numbers of the rows in the array provided in the constructor that make up
 	 *     the best solution.
+	 * @throws Exception
 	 */
-	public ArrayList<Integer> exactCover(int maxResults) {
+	public ArrayList<Integer> exactCover(int maxResults) throws Exception {
 		this.maxResults = maxResults;
+		timeCheckPoint = System.currentTimeMillis();
+		checker = true;
 		search();
 		return bestSolution;
 	}
@@ -79,7 +84,7 @@ public class LinkedList {
 		}
 	}
 
-	int search() {
+	int search() throws Exception {
 		if (solutionsFound >= maxResults) return 0;
 		switch (Program.coverMode) {
 			case 'e':
@@ -105,6 +110,12 @@ public class LinkedList {
 					return valueOf(partialSolution);
 				}
 				break;
+		}
+
+		if(System.currentTimeMillis() - timeCheckPoint > 3000 && checker){
+			checker = false;
+			Exception noSolutionFound = new Exception();
+			throw noSolutionFound;
 		}
 
 		ColumnObject c;
