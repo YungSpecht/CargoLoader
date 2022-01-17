@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class LinkedList{
 	ColumnObject header;
 	int[][] matrix;
-
+	ArrayList<Integer> specialCase;
 	ArrayList<Integer> partialSolution;
 	ArrayList<Integer> bestSolution;
 	int[] parcelCount;
@@ -23,6 +23,7 @@ public class LinkedList{
 	int solutionsFound;
 	int maxResults;
 	double timeCheckPoint;
+	boolean check;
 
 	/**
 	 * Creates a LinkedListPentos object. A doubly-linked list is created based on the provided matrix, and the
@@ -35,6 +36,7 @@ public class LinkedList{
 	public LinkedList(int[][] matrix) {
 		partialSolution = new ArrayList<Integer>();
 		bestSolution = new ArrayList<Integer>();
+		specialCase = new ArrayList<Integer>();
 		parcelCount = new int[3];
 		maxValue = 0;
 		this.matrix = matrix;
@@ -52,6 +54,7 @@ public class LinkedList{
 	public ArrayList<Integer> exactCover(int maxResults) throws Exception {
 		this.maxResults = maxResults;
 		timeCheckPoint = System.currentTimeMillis();
+		check = false;
 		search();
 		return bestSolution;
 	}
@@ -84,6 +87,9 @@ public class LinkedList{
 	}
 
 	int search() throws Exception {
+		if(valueOf(partialSolution) > valueOf(specialCase)){
+			specialCase = new ArrayList<>(partialSolution);
+		}
 		if (solutionsFound >= maxResults) return 0;
 		switch (Program.coverMode) {
 			case 'e':
@@ -107,13 +113,23 @@ public class LinkedList{
 					solutionsFound++;
 					return valueOf(partialSolution);
 				}
+				if(Program.parcelMode == 'p' && check){
+					if (valueOf(partialSolution) > valueOf(bestSolution)) {
+						bestSolution = specialCase;
+						maxValue = valueOf(specialCase);
+					}
+					System.out.print("\r[" + (solutionsFound + 1) + "/" + maxResults + "] solutions found");
+					solutionsFound++;
+					return valueOf(specialCase);
+				}
 				break;
 			default : System.out.println("Invalid mode");
 		}
-
-		if(System.currentTimeMillis() - timeCheckPoint > 5000 && solutionsFound == 0){
+		if(System.currentTimeMillis() - timeCheckPoint > 4000 && GUI.exactCover && solutionsFound == 0){
 			Exception noSolutionFound = new Exception();
 			throw noSolutionFound;
+		}else if(System.currentTimeMillis() - timeCheckPoint > 10000 && solutionsFound == 0){
+			check = true;
 		}
 
 		ColumnObject c;
