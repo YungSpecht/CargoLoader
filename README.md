@@ -9,4 +9,19 @@
   <li>Parcel B: 1m x 1.5m x 2m</li>
   <li>Parcel C: 1.5m x 1.5m x 1.5m</li>
 </ul>
-</p>
+</p><br>
+<h2 align="left">Algorithm</h2><br>
+<p>
+  In order to tackle this problem the cargo space and parcels are represented as three-dimensional matrices. Each package type is placed in the container in each possible position and the resulting matrix is flattened. All of the resulting rows are combined to a big matrix and Donald Kuth's Algorithm X is used in order to find an exact cover such that the cargo space is completely filled. It uses a dancing links implementation to ensure better efficiency.
+</p><br>
+<h2 align="left">Running the Program</h2><br>
+<p>
+  In order to run the program follow these steps:
+<ol>
+  <li>Clone this github repository</li>
+  <li>Make sure you have javaFX installed since it is a dependency</li>
+  <li>Navigate into the CargoLoader directory</li>
+  <li>Run the Prorgram.java file</li>
+</ol>
+</p><br>
+<h2 align="left">Authors</h2><br>
