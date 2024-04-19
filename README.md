@@ -1,3 +1,3 @@
-# CargoLoader
-A program that loads a cargo space with parcels using Algorithm X.
-<p align="center"><img src="[https://imgur.com/a/i8grND5](https://imgur.com/a/i8grND5)"></p>
+<h1 align="center"> Project 1-2: Crazy Putting | Phase 3</h1>
+<p align="center">Made by Group 02 - The Rockers</p><br>
+<p align="center"><img src="https://i.imgur.com/EkfClq5.png"></p>
