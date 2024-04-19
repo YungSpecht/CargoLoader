@@ -25,3 +25,14 @@
 </ol>
 </p><br>
 <h2 align="left">Authors</h2><br>
+<p>
+  <ul>
+  <li><a href="https://github.com/kal39">Kai Kitagawa-Jones</a></li>
+  <li><a href="https://github.com/sequeiragui">Guillerme Pereira Sequeira</a></li>
+  <li><a href="https://github.com/YungSpecht">Niklas Druba</a></li>
+  <li><a href="url">Anton Zegelaar</a></li>
+  <li><a href="url">Qi Cui</a></li>
+  <li><a href="url">Fei Yu</a></li>
+  <li><a href="url">Irena Shaleva</a></li>
+</ul>
+</p>
