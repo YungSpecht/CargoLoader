@@ -21,7 +21,7 @@
   <li>Clone this github repository</li>
   <li>Make sure you have javaFX installed since it is a dependency</li>
   <li>Navigate into the CargoLoader directory</li>
-  <li>Run the Prorgram.java file</li>
+  <li>Run the Program.java file</li>
 </ol>
 </p><br>
 <h2 align="left">Authors</h2><br>
